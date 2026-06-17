@@ -1,59 +1,63 @@
-"""Shared Plotly color scheme and layout helpers, used by every page.
+"""Plotly color scheme + layout helpers — Flaming Owl portal palette.
 
-Palette mirrors the billy-dash design tokens: warm orange-red primary, deep
-navy text, and the platform accent colors (blue / amber / green) for series.
+Crimson is the FO single accent; the categorical sequence is a clean, standard
+dashboard palette (crimson, iron, teal, amber, EqualGreen lime, …) that stays
+legible on white. Chart titles use Playfair Display, body text Inter, numerals
+JetBrains Mono.
 """
 
-# Core palette.
+# FO portal anchors.
 COLORS = {
-    "primary": "#E65F33",     # warm orange-red — brand / highlight series
-    "secondary": "#2563EB",   # blue
-    "accent": "#20B074",      # green
-    "amber": "#F5A623",
-    "danger": "#DC2626",      # red — anomalies / flags
-    "success": "#20B074",     # green — recovery
-    "navy": "#1E2233",
-    "muted": "#6B7280",
-    "2023": "#2563EB",        # blue
-    "2024": "#E65F33",        # orange (primary)
-    "2025": "#20B074",        # green
+    "primary": "#DC2828",     # Flaming Owl crimson
+    "secondary": "#0E7C86",   # teal
+    "accent": "#9BBF3B",      # EqualGreen lime
+    "amber": "#E0A106",
+    "danger": "#DC2828",
+    "success": "#2E7D5B",
+    "iron": "#141414",
+    "slate": "#5B6472",
+    "muted": "#5F5F5F",
+    "2023": "#9BBF3B",        # lime (EqualGreen)
+    "2024": "#DC2828",        # crimson (Flaming Owl)
+    "2025": "#141414",        # iron
 }
 
-# Categorical sequence (used wherever a service / company / vehicle list needs
-# distinct colors). Brand orange leads.
+# Standard dashboard categorical palette (legible on white, crimson-led).
 SEQUENCE = [
-    "#E65F33", "#2563EB", "#20B074", "#F5A623", "#7C3AED",
-    "#DC2626", "#0EA5A5", "#DB2777", "#64748B", "#1E2233",
-    "#A855F7", "#0284C7",
+    "#DC2828", "#141414", "#0E7C86", "#E0A106", "#9BBF3B",
+    "#7A4FBF", "#5B6472", "#C2497A", "#2E7D5B", "#B8742A",
+    "#3E73B8", "#9AA0A6",
 ]
 
-# Stable per-service colors so a service is the same color on every page.
+# Stable per-service colors.
 SERVICE_COLORS = {
-    "DOMICILIARIA": "#2563EB",
-    "SERVICIOS ESPECIAL": "#E65F33",   # the anomaly — brand orange, stands out
-    "INDUSTRIAL": "#F5A623",
-    "COMERCIAL": "#20B074",
-    "MUNICIPAL": "#7C3AED",
-    "INSTITUCIONAL": "#0EA5A5",
-    "MERCADO": "#DB2777",
+    "DOMICILIARIA": "#5B6472",          # slate (dominant, neutral)
+    "SERVICIOS ESPECIAL": "#DC2828",    # crimson — the anomaly / brand accent
+    "INDUSTRIAL": "#E0A106",            # amber
+    "COMERCIAL": "#0E7C86",             # teal
+    "MUNICIPAL": "#7A4FBF",             # purple
+    "INSTITUCIONAL": "#9BBF3B",         # lime
+    "MERCADO": "#C2497A",               # rose
 }
 
 YEAR_COLORS = {2023: COLORS["2023"], 2024: COLORS["2024"], 2025: COLORS["2025"]}
 
-_NAVY = "#1E2233"
-_MUTED = "#6B7280"
-_GRID = "rgba(30,34,51,0.08)"
+_IRON = "#141414"
+_MUTED = "#5F5F5F"
+_GRID = "rgba(20,20,20,0.08)"
 
 
 def apply_layout(fig, title=None, height=380):
-    """Apply the consistent look to a Plotly figure."""
+    """Apply the consistent FO-portal look to a Plotly figure."""
     fig.update_layout(
-        title=dict(text=title, font=dict(size=15, color=_NAVY, family="Inter")) if title else None,
+        title=dict(text=title,
+                   font=dict(size=16, color=_IRON, family="Playfair Display"))
+        if title else None,
         height=height,
-        margin=dict(l=12, r=12, t=44 if title else 12, b=64),
+        margin=dict(l=12, r=12, t=46 if title else 12, b=64),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter, sans-serif", size=13, color=_NAVY),
+        font=dict(family="Inter, sans-serif", size=13, color=_IRON),
         colorway=SEQUENCE,
         title_x=0,
         legend=dict(orientation="h", yanchor="top", y=-0.18, xanchor="left", x=0,

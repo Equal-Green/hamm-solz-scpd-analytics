@@ -1,120 +1,151 @@
-"""Billy.com-inspired visual layer for the dashboard.
+"""Flaming Owl portal visual layer, co-branded with the EqualGreen logo.
 
-Injects a single CSS block (Inter + JetBrains Mono, glass metric cards, navy
-headings, refined sidebar/tables/alerts) and provides a branded page header.
-Every page calls inject_css() once after st.set_page_config().
+FO portal design system: crimson single accent on an iron/cream brutalist base,
+dark iron sidebar, Playfair Display display headings + Inter body + JetBrains
+Mono numerals, 16px cards, fully-rounded buttons, 3px offset-shadow signature.
+Every page calls inject_css() after st.set_page_config(); render_header() draws
+the branded hero with the EqualGreen mark.
 """
+import base64
+import os
+
 import streamlit as st
 
-# Palette (mirrors billy-dash design tokens).
-NAVY = "#1E2233"
-PRIMARY = "#E65F33"
-PRIMARY_DARK = "#CF4E25"
-MUTED = "#6B7280"
-SURFACE = "#F4F5F8"
-BORDER = "#E4E6EC"
-CARD_SHADOW = "0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.05)"
+# --- FO portal palette -------------------------------------------------------
+CRIMSON = "#DC2828"        # Flaming Owl crimson — single accent  (hsl 0 72% 51%)
+CRIMSON_DARK = "#B91C1C"
+IRON = "#141414"           # ink / dark sidebar / brutalist border
+CREAM = "#F8F5EF"          # warm paper
+ASH = "#BFBFBF"            # hairline borders / muted on dark
+MUTED = "#5F5F5F"          # secondary text on white
+BORDER = "#E4E1DB"
+SURFACE = "#F6F4F0"
+EG_LIME = "#9BBF3B"        # EqualGreen accent
+
+_ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
+LOGO_FULL = os.path.join(_ASSETS, "equalgreen-logo.png")
+LOGO_MARK = os.path.join(_ASSETS, "equalgreen-mark.png")
+
+
+def _data_uri(path):
+    try:
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        return f"data:image/png;base64,{b64}"
+    except OSError:
+        return ""
+
+
+_LOGO_URI = _data_uri(LOGO_MARK if os.path.exists(LOGO_MARK) else LOGO_FULL)
 
 _CSS = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
 html, body, [class*="css"], .stApp, [data-testid="stMarkdownContainer"] {{
     font-family: 'Inter', system-ui, sans-serif;
 }}
-.stApp {{ background: #FBFBFD; }}
+.stApp {{ background: #FFFFFF; }}
 
-/* Tighten the default page padding, widen content. */
 [data-testid="stMainBlockContainer"] {{
-    padding-top: 2.2rem; padding-bottom: 3rem;
-    max-width: 1180px;
+    padding-top: 2.2rem; padding-bottom: 3rem; max-width: 1180px;
 }}
 
-/* Headings */
-h1, h2, h3, h4 {{
-    font-family: 'Inter', sans-serif !important;
-    color: {NAVY} !important; letter-spacing: -0.02em; font-weight: 800 !important;
+/* Display headings in Playfair (FO portal display face) */
+h1, h2, h3 {{
+    font-family: 'Playfair Display', Georgia, serif !important;
+    color: {IRON} !important; letter-spacing: -0.01em; font-weight: 800 !important;
 }}
-h1 {{ font-size: 2.05rem !important; }}
-h2 {{ font-size: 1.4rem !important; font-weight: 700 !important; margin-top: .4rem; }}
-h3 {{ font-size: 1.12rem !important; font-weight: 700 !important; }}
-[data-testid="stCaptionContainer"], .stCaption {{ color: {MUTED} !important; }}
+h1 {{ font-size: 2.1rem !important; }}
+h2 {{ font-size: 1.5rem !important; }}
+h3 {{ font-size: 1.18rem !important; }}
+h4 {{ font-family: 'Inter', sans-serif !important; color: {IRON} !important;
+      font-weight: 700 !important; }}
+[data-testid="stCaptionContainer"] {{ color: {MUTED} !important; }}
 
-/* Branded header banner (render_header) */
+/* Branded hero header — iron with crimson keyline + EqualGreen mark */
 .scpd-header {{
-    background: linear-gradient(135deg, {NAVY} 0%, #2A2F45 100%);
-    border-radius: 16px; padding: 1.4rem 1.6rem; margin-bottom: 1.4rem;
-    box-shadow: {CARD_SHADOW}; position: relative; overflow: hidden;
+    background: {IRON}; border-radius: 16px; padding: 1.4rem 1.6rem;
+    margin-bottom: 1.4rem; position: relative; overflow: hidden;
+    border: 1.5px solid {IRON}; box-shadow: 5px 5px 0 0 {CRIMSON};
+    display: flex; align-items: center; gap: 1.1rem;
 }}
-.scpd-header::after {{
-    content: ""; position: absolute; right: -40px; top: -40px;
-    width: 180px; height: 180px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(230,95,51,.35), transparent 70%);
+.scpd-header .scpd-logo {{
+    width: 60px; height: 60px; border-radius: 12px; flex: 0 0 auto;
+    background-image: url('{_LOGO_URI}'); background-size: cover;
+    background-position: center; box-shadow: 0 0 0 1px rgba(255,255,255,.12);
 }}
-.scpd-header h1 {{ color: #fff !important; margin: 0 0 .2rem 0; font-size: 1.7rem !important; }}
-.scpd-header .scpd-sub {{ color: #C9CDDB; font-size: .92rem; font-weight: 500; }}
+.scpd-header h1 {{
+    color: {CREAM} !important; margin: 0 0 .15rem 0; font-size: 1.8rem !important;
+}}
+.scpd-header .scpd-sub {{ color: #C7C4BD; font-size: .92rem; font-weight: 500; }}
 .scpd-header .scpd-eyebrow {{
-    display:inline-block; color: {PRIMARY}; font-weight: 700; font-size: .72rem;
-    letter-spacing: .14em; text-transform: uppercase; margin-bottom: .35rem;
+    display:inline-block; color: {CRIMSON}; font-weight: 700; font-size: .72rem;
+    letter-spacing: .16em; text-transform: uppercase; margin-bottom: .35rem;
+    font-family: 'JetBrains Mono', monospace;
 }}
 
-/* Metric cards — glass-card look */
+/* Metric cards — brutalist offset shadow */
 [data-testid="stMetric"] {{
-    background: #fff; border: 1px solid {BORDER}; border-radius: 14px;
-    padding: 1rem 1.15rem; box-shadow: {CARD_SHADOW};
+    background: #fff; border: 1.5px solid {IRON}; border-radius: 14px;
+    padding: 1rem 1.15rem; box-shadow: 3px 3px 0 0 {IRON};
 }}
 [data-testid="stMetric"] [data-testid="stMetricLabel"] {{
-    color: {MUTED} !important; font-weight: 600; font-size: .82rem;
-    text-transform: uppercase; letter-spacing: .04em;
+    color: {MUTED} !important; font-weight: 600; font-size: .8rem;
+    text-transform: uppercase; letter-spacing: .05em;
 }}
 [data-testid="stMetricValue"] {{
     font-family: 'JetBrains Mono', monospace !important;
-    color: {NAVY} !important; font-weight: 700; font-size: 1.5rem;
+    color: {IRON} !important; font-weight: 700; font-size: 1.5rem;
 }}
 [data-testid="stMetricDelta"] {{ font-weight: 600; }}
 
-/* Sidebar */
-[data-testid="stSidebar"] {{
-    background: {SURFACE}; border-right: 1px solid {BORDER};
+/* Dark iron sidebar (FO portal signature) */
+[data-testid="stSidebar"] {{ background: {IRON}; border-right: 1px solid #000; }}
+[data-testid="stSidebar"] * {{ color: {CREAM}; }}
+[data-testid="stSidebarNav"] a {{ border-radius: 8px; color: #CFCCC5 !important; }}
+[data-testid="stSidebarNav"] a:hover {{ background: rgba(255,255,255,.06); }}
+[data-testid="stSidebarNav"] a[aria-current="page"] {{
+    background: rgba(220,40,40,.20); color: #fff !important;
+    box-shadow: inset 3px 0 0 {CRIMSON};
 }}
-[data-testid="stSidebar"] [data-testid="stSidebarNav"] a {{ border-radius: 8px; }}
-/* Nested-nav section labels */
-[data-testid="stSidebarNav"] ul {{ margin-top: .1rem; }}
+[data-testid="stSidebarNav"] a[aria-current="page"] span {{ color:#fff !important; }}
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {{ color: {ASH} !important; }}
 .scpd-brand {{
-    font-weight: 800; color: {NAVY}; font-size: 1.18rem; line-height: 1.1;
-    padding: .2rem .2rem .8rem .2rem; border-bottom: 1px solid {BORDER};
-    margin-bottom: .4rem; display: flex; flex-direction: column;
+    font-family: 'Playfair Display', serif; font-weight: 800; color: {CREAM};
+    font-size: 1.16rem; line-height: 1.1; padding: .1rem .2rem .7rem .2rem;
+    border-bottom: 1px solid #2A2A2A; margin-bottom: .5rem;
+    display: flex; flex-direction: column;
 }}
-.scpd-brand span {{ color: {NAVY}; }}
 .scpd-brand-sub {{
-    font-size: .72rem; font-weight: 600; color: {MUTED};
-    text-transform: uppercase; letter-spacing: .08em; margin-top: .2rem;
+    font-family: 'JetBrains Mono', monospace; font-size: .66rem; font-weight: 600;
+    color: {CRIMSON}; text-transform: uppercase; letter-spacing: .12em;
+    margin-top: .35rem;
 }}
 
-/* Buttons */
-.stButton > button, [data-testid="stBaseButton-primary"] {{
-    border-radius: 10px; font-weight: 600; border: 1px solid {BORDER};
+/* Buttons — fully-rounded crimson pills */
+.stButton > button, [data-testid="stBaseButton-secondary"] {{
+    border-radius: 999px; font-weight: 600; border: 1.5px solid {IRON};
+    color: {IRON};
 }}
 [data-testid="stBaseButton-primary"] {{
-    background: {PRIMARY}; border-color: {PRIMARY};
+    background: {CRIMSON}; border: 1.5px solid {IRON}; border-radius: 999px;
+    color: {CREAM}; box-shadow: 3px 3px 0 0 {IRON}; font-weight: 700;
 }}
-[data-testid="stBaseButton-primary"]:hover {{ background: {PRIMARY_DARK}; border-color: {PRIMARY_DARK}; }}
+[data-testid="stBaseButton-primary"]:hover {{ background: {CRIMSON_DARK}; }}
 
-/* Dataframes */
-[data-testid="stDataFrame"] {{ border-radius: 12px; border: 1px solid {BORDER}; overflow: hidden; }}
-
-/* Alerts / callouts */
-[data-testid="stAlert"] {{ border-radius: 12px; border: 1px solid {BORDER}; }}
-
-/* Charts: lift onto subtle cards */
+/* Chart cards */
 [data-testid="stPlotlyChart"] {{
     background: #fff; border: 1px solid {BORDER}; border-radius: 14px;
-    padding: .5rem .4rem; box-shadow: {CARD_SHADOW};
+    padding: .5rem .4rem; box-shadow: 0 1px 2px rgba(20,20,20,.04);
 }}
-
-/* Selectbox / inputs */
+[data-testid="stDataFrame"] {{ border-radius: 12px; border: 1px solid {BORDER}; overflow: hidden; }}
+[data-testid="stAlert"] {{ border-radius: 12px; border: 1px solid {BORDER}; }}
 [data-baseweb="select"] > div {{ border-radius: 10px; }}
 hr {{ border-color: {BORDER}; }}
+
+/* bordered containers (key-findings cards) */
+[data-testid="stVerticalBlockBorderWrapper"] {{ border-radius: 14px; }}
 </style>
 """
 
@@ -123,11 +154,13 @@ def inject_css():
     st.markdown(_CSS, unsafe_allow_html=True)
 
 
-def render_header(title, subtitle="", eyebrow="SCPD ANALYTICS"):
-    """Branded hero banner used at the top of each page."""
+def render_header(title, subtitle="", eyebrow="EQUALGREEN × FLAMING OWL"):
+    """Branded hero banner with the EqualGreen mark and FO portal styling."""
+    logo = '<div class="scpd-logo"></div>' if _LOGO_URI else ""
     sub = f'<div class="scpd-sub">{subtitle}</div>' if subtitle else ""
     eb = f'<div class="scpd-eyebrow">{eyebrow}</div>' if eyebrow else ""
     st.markdown(
-        f'<div class="scpd-header">{eb}<h1>{title}</h1>{sub}</div>',
+        f'<div class="scpd-header">{logo}'
+        f'<div>{eb}<h1>{title}</h1>{sub}</div></div>',
         unsafe_allow_html=True,
     )

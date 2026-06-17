@@ -19,7 +19,7 @@ import streamlit as st
 
 from db import get_db          # noqa: E402  (db.py fixes sys.path)
 from state import is_loaded, loaded_files
-from style import inject_css, render_header
+from style import inject_css, render_header, LOGO_FULL
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
 from pipeline.load import run_pipeline
@@ -86,15 +86,25 @@ if not is_loaded(con):
     _run_pipeline_ui()
     st.stop()
 
-# Sidebar brand block above the nested navigation.
+# EqualGreen logo at the top of the (dark iron) sidebar.
+st.logo(LOGO_FULL, size="large")
+
 with st.sidebar:
     st.markdown(
-        '<div class="scpd-brand">🗑️ <span>SCPD Analytics</span>'
-        '<div class="scpd-brand-sub">Guayaquil · Las Iguanas</div></div>',
+        '<div class="scpd-brand"><span>EqualGreen</span>'
+        '<div class="scpd-brand-sub">× Balsapamba · Ecuador</div></div>',
         unsafe_allow_html=True,
     )
 
-home = st.Page("pages/00_home.py", title="Executive Summary", icon="🏠", default=True)
+# Who we are — EqualGreen brand presentation (sub-items indent under the group).
+where_we_are = st.Page("pages/10_where_we_are.py", title="Where we are",
+                       icon="📍", default=True)
+the_name = st.Page("pages/11_the_name.py", title="The name", icon="🔤")
+quichua = st.Page("pages/12_quichua.py", title="Quichua", icon="🌿")
+story = st.Page("pages/13_story.py", title="Story", icon="📖")
+
+# The SCPD data story.
+home = st.Page("pages/00_home.py", title="Executive Summary", icon="🏠")
 overview = st.Page("pages/01_overview.py", title="Overview", icon="📈")
 services = st.Page("pages/02_service_types.py", title="Service Types", icon="🧾")
 operators = st.Page("pages/03_operators.py", title="Operators & Fleet", icon="🚛")
@@ -104,8 +114,8 @@ quality = st.Page("pages/05_data_quality.py", title="Data Quality & Catalog", ic
 settings = st.Page("pages/06_settings.py", title="Settings", icon="⚙️")
 
 nav = st.navigation({
-    "Start here": [home],
-    "The story": [overview, services, operators, geocycle],
+    "Who we are": [where_we_are, the_name, quichua, story],
+    "The data story": [home, overview, services, operators, geocycle],
     "Explore": [ask],
     "Trust & data": [quality],
     "System": [settings],

@@ -1,15 +1,15 @@
-# Billy.com-inspired theme. Warm orange-red primary, deep-navy text,
-# light-slate surfaces, generous rounding. Fonts are loaded via injected CSS
-# (dashboard/style.py) so Inter / JetBrains Mono render everywhere.
+# Flaming Owl portal theme — crimson accent, iron text, cream/white surfaces,
+# 16px rounding. Fonts (Playfair Display / Inter / JetBrains Mono) load via
+# injected CSS (dashboard/style.py). Dark iron sidebar is styled there too.
 [theme]
 base = "light"
-primaryColor = "#E65F33"
+primaryColor = "#DC2828"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F4F5F8"
-textColor = "#1E2233"
-linkColor = "#E65F33"
-borderColor = "#E4E6EC"
-baseRadius = "0.75rem"
+secondaryBackgroundColor = "#F6F4F0"
+textColor = "#141414"
+linkColor = "#DC2828"
+borderColor = "#E4E1DB"
+baseRadius = "1rem"
 font = "sans-serif"
 
 [server]
