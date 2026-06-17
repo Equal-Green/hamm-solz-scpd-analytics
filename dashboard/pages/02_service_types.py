@@ -11,12 +11,14 @@ from db import get_db
 from state import ensure_loaded
 from theme import SERVICE_COLORS, SEQUENCE, COLORS, apply_layout
 from analysis import queries as q
+from style import inject_css, render_header
 
 st.set_page_config(page_title="Service Types · SCPD", page_icon="🧾", layout="wide")
 con = get_db()
+inject_css()
 ensure_loaded(con)
 
-st.title("🧾 Service Types")
+render_header("Service Types", "Trips and tonnage by waste service category.")
 
 # Anomaly callout
 an = q.servicios_especial_anomaly(con)

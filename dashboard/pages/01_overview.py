@@ -12,12 +12,14 @@ from db import get_db
 from state import ensure_loaded
 from theme import YEAR_COLORS, SERVICE_COLORS, SEQUENCE, apply_layout
 from analysis import queries as q
+from style import inject_css, render_header
 
 st.set_page_config(page_title="Overview · SCPD", page_icon="📊", layout="wide")
 con = get_db()
+inject_css()
 ensure_loaded(con)
 
-st.title("📊 Overview")
+render_header("Overview", "Volume and tonnage trends across 2023–2025.")
 
 k = q.kpis(con)
 c1, c2, c3, c4 = st.columns(4)
@@ -25,7 +27,7 @@ c1.metric("Total trips", f"{k['trips']:,}")
 c2.metric("Total net tonnage", f"{k['tonnes']:,.0f} t")
 c3.metric("Avg per trip", f"{k['avg_kg']:,.0f} kg")
 c4.metric("Date range",
-          f"{k['first_dt']:%b %Y} – {k['last_dt']:%b %Y}" if k["first_dt"] else "—")
+          f"{k['first_dt']:%Y}–{k['last_dt']:%Y}" if k["first_dt"] else "—")
 
 st.divider()
 
@@ -47,11 +49,12 @@ col_a, col_b = st.columns(2)
 
 with col_a:
     at = q.annual_tonnage(con)
-    fig2 = px.bar(at, x="year", y="tonnes",
-                  color_discrete_sequence=[v for v in YEAR_COLORS.values()],
-                  color="year", text_auto=".2s")
+    at["year_str"] = at["year"].astype(str)
+    fig2 = px.bar(at, x="year_str", y="tonnes", color="year_str",
+                  color_discrete_map={str(y): c for y, c in YEAR_COLORS.items()},
+                  text_auto=".2s")
     fig2.update_layout(showlegend=False)
-    fig2.update_xaxes(type="category")
+    fig2.update_xaxes(type="category", title_text="")
     st.plotly_chart(apply_layout(fig2, "Total annual net tonnage"),
                     use_container_width=True)
 

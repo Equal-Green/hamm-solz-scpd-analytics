@@ -9,12 +9,14 @@ for _p in (_here, os.path.dirname(_here), os.path.dirname(os.path.dirname(_here)
 from db import get_db
 from state import ensure_loaded
 from analysis import queries as q
+from style import inject_css, render_header
 
 st.set_page_config(page_title="Data Quality · SCPD", page_icon="🔎", layout="wide")
 con = get_db()
+inject_css()
 ensure_loaded(con)
 
-st.title("🔎 Data Quality")
+render_header("Data Quality", "Row counts, null rates, and integrity flags.")
 
 rep = q.quality_report(con)
 

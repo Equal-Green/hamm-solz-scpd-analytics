@@ -12,12 +12,14 @@ from db import get_db
 from state import ensure_loaded
 from theme import COLORS, apply_layout
 from analysis import queries as q
+from style import inject_css, render_header
 
 st.set_page_config(page_title="GEOCYCLE Recovery · SCPD", page_icon="♻️", layout="wide")
 con = get_db()
+inject_css()
 ensure_loaded(con)
 
-st.title("♻️ GEOCYCLE Material Recovery")
+render_header("GEOCYCLE Recovery", "Material recovery — inverted weigh logic.", eyebrow="SCPD ANALYTICS · RECOVERY")
 st.info(
     "**Inverted weight logic.** GEOCYCLE trucks arrive **empty** and leave "
     "**loaded** with recovered material, so `PESO_SALIDA > PESO_INGRESO` is "
@@ -31,7 +33,7 @@ c1.metric("Recovery trips", f"{rk['trips']:,}")
 c2.metric("Recovered tonnage", f"{rk['tonnes']:,.0f} t")
 c3.metric("Organizations", f"{rk['orgs']:,}")
 c4.metric("Date range",
-          f"{rk['first_dt']:%b %Y} – {rk['last_dt']:%b %Y}" if rk["first_dt"] else "—")
+          f"{rk['first_dt']:%Y}–{rk['last_dt']:%Y}" if rk["first_dt"] else "—")
 
 st.divider()
 

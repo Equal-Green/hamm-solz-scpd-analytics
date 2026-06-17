@@ -1,0 +1,16 @@
+# Billy.com-inspired theme. Warm orange-red primary, deep-navy text,
+# light-slate surfaces, generous rounding. Fonts are loaded via injected CSS
+# (dashboard/style.py) so Inter / JetBrains Mono render everywhere.
+[theme]
+base = "light"
+primaryColor = "#E65F33"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F5F8"
+textColor = "#1E2233"
+linkColor = "#E65F33"
+borderColor = "#E4E6EC"
+baseRadius = "0.75rem"
+font = "sans-serif"
+
+[server]
+headless = true

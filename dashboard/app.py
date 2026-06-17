@@ -19,6 +19,7 @@ import streamlit as st
 
 from db import get_db          # noqa: E402  (db.py fixes sys.path)
 from state import is_loaded, loaded_files
+from style import inject_css, render_header
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
 from analysis import queries as q
@@ -28,13 +29,15 @@ st.set_page_config(page_title="SCPD Analytics — Guayaquil",
                    page_icon="🗑️", layout="wide")
 
 con = get_db()
+inject_css()
 
 
 def _run_pipeline_ui():
-    st.title("🗑️ SCPD Analytics — First-Run Setup")
-    st.caption(
+    render_header(
+        "First-Run Setup",
         "Sistema de Control y Pesaje de Desechos — Las Iguanas landfill, "
-        "Guayaquil (Consorcio URVASEO / CIRCULAREP)."
+        "Guayaquil (Consorcio URVASEO / CIRCULAREP).",
+        eyebrow="SCPD ANALYTICS · PIPELINE",
     )
 
     zip_ok = os.path.exists(ZIP_PATH)
@@ -80,10 +83,10 @@ def _run_pipeline_ui():
 
 
 def _home():
-    st.title("🗑️ SCPD Analytics — Guayaquil Solid Waste")
-    st.caption(
+    render_header(
+        "Guayaquil Solid Waste",
         "Las Iguanas landfill · Consorcio URVASEO · CIRCULAREP — "
-        "2023–2025 weighbridge records."
+        "2023–2025 weighbridge records.",
     )
 
     k = q.kpis(con)
@@ -91,8 +94,7 @@ def _home():
     c1.metric("Total trips", f"{k['trips']:,}")
     c2.metric("Net tonnage", f"{k['tonnes']:,.0f} t")
     c3.metric("Avg per trip", f"{k['avg_kg']:,.0f} kg")
-    rng = (f"{k['first_dt']:%b %Y} – {k['last_dt']:%b %Y}"
-           if k["first_dt"] else "—")
+    rng = (f"{k['first_dt']:%Y}–{k['last_dt']:%Y}" if k["first_dt"] else "—")
     c4.metric("Date range", rng)
 
     st.divider()
