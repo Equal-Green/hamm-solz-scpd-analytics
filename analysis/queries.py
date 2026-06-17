@@ -1,0 +1,256 @@
+"""All analytics as named functions returning pandas DataFrames (small,
+aggregated result sets) or plain dicts. Every heavy computation is a DuckDB
+SQL aggregation over the local file -- no pandas parsing, no row-by-row Python.
+
+Weights are stored in kilograms; tonnage helpers divide by 1000.
+"""
+
+# --- filter option helpers ---------------------------------------------------
+def years(con):
+    return [r[0] for r in con.execute(
+        "SELECT DISTINCT source_year FROM transactions ORDER BY 1").fetchall()]
+
+
+def services(con):
+    return [r[0] for r in con.execute(
+        "SELECT DISTINCT tipo_servicio FROM transactions "
+        "WHERE tipo_servicio IS NOT NULL ORDER BY 1").fetchall()]
+
+
+def _year_clause(year):
+    return ("", []) if not year else (" AND source_year = ?", [year])
+
+
+def _service_clause(servicio):
+    return ("", []) if not servicio else (" AND tipo_servicio = ?", [servicio])
+
+
+# --- overview ----------------------------------------------------------------
+def kpis(con):
+    row = con.execute("""
+        SELECT count(*) AS trips,
+               sum(peso_neto)/1000.0 AS tonnes,
+               avg(peso_neto) AS avg_kg,
+               min(fec_ingreso) AS first_dt,
+               max(fec_ingreso) AS last_dt
+        FROM transactions
+    """).fetchone()
+    return {
+        "trips": row[0] or 0,
+        "tonnes": row[1] or 0.0,
+        "avg_kg": row[2] or 0.0,
+        "first_dt": row[3],
+        "last_dt": row[4],
+    }
+
+
+def monthly_trips(con):
+    """Trips per calendar month, one column per year -- for an overlaid line."""
+    return con.execute("""
+        SELECT mes, source_year, count(*) AS trips
+        FROM transactions
+        WHERE mes IS NOT NULL
+        GROUP BY 1, 2
+        ORDER BY 1, 2
+    """).df()
+
+
+def annual_tonnage(con):
+    return con.execute("""
+        SELECT source_year AS year, sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions GROUP BY 1 ORDER BY 1
+    """).df()
+
+
+def monthly_tonnage_by_service(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT mes, tipo_servicio, sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions
+        WHERE mes IS NOT NULL AND tipo_servicio IS NOT NULL {yc}
+        GROUP BY 1, 2 ORDER BY 1, 2
+    """, yp).df()
+
+
+# --- service types -----------------------------------------------------------
+def service_summary(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT tipo_servicio,
+               count(*) AS trips,
+               sum(peso_neto)/1000.0 AS tonnes,
+               avg(peso_neto) AS avg_kg
+        FROM transactions
+        WHERE tipo_servicio IS NOT NULL {yc}
+        GROUP BY 1 ORDER BY trips DESC
+    """, yp).df()
+
+
+def service_yoy(con):
+    """Trips per service per year, pivoted, with YoY % change columns."""
+    df = con.execute("""
+        SELECT tipo_servicio, source_year, count(*) AS trips
+        FROM transactions WHERE tipo_servicio IS NOT NULL
+        GROUP BY 1, 2
+    """).df()
+    pivot = df.pivot(index="tipo_servicio", columns="source_year",
+                     values="trips").fillna(0).astype(int)
+    cols = sorted(pivot.columns)
+    for i in range(1, len(cols)):
+        prev, cur = cols[i - 1], cols[i]
+        pivot[f"{prev}->{cur} %"] = (
+            (pivot[cur] - pivot[prev]) / pivot[prev].replace(0, float("nan")) * 100
+        ).round(1)
+    return pivot.reset_index()
+
+
+def servicios_especial_anomaly(con):
+    """Return the 2023->2024 trip spike for SERVICIOS ESPECIAL, computed live."""
+    rows = dict(con.execute("""
+        SELECT source_year, count(*)
+        FROM transactions
+        WHERE upper(tipo_servicio) LIKE 'SERVICIOS ESPECIAL%'
+        GROUP BY 1
+    """).fetchall())
+    t23, t24 = rows.get(2023), rows.get(2024)
+    pct = round((t24 - t23) / t23 * 100, 1) if t23 and t24 else None
+    return {"y2023": t23, "y2024": t24, "pct": pct, "by_year": rows}
+
+
+# --- operators & fleet -------------------------------------------------------
+def top_empresas(con, year=None, servicio=None, n=10):
+    yc, yp = _year_clause(year)
+    sc, sp = _service_clause(servicio)
+    return con.execute(f"""
+        SELECT empresa,
+               count(*) AS trips,
+               sum(peso_neto)/1000.0 AS tonnes,
+               avg(peso_neto) AS avg_kg
+        FROM transactions
+        WHERE empresa IS NOT NULL {yc} {sc}
+        GROUP BY 1 ORDER BY trips DESC LIMIT {int(n)}
+    """, yp + sp).df()
+
+
+def vehicle_distribution(con, year=None, servicio=None):
+    yc, yp = _year_clause(year)
+    sc, sp = _service_clause(servicio)
+    return con.execute(f"""
+        SELECT tipo_vehiculo, count(*) AS trips
+        FROM transactions
+        WHERE tipo_vehiculo IS NOT NULL {yc} {sc}
+        GROUP BY 1 ORDER BY trips DESC
+    """, yp + sp).df()
+
+
+# --- geocycle recovery -------------------------------------------------------
+def retirados_monthly(con):
+    return con.execute("""
+        SELECT date_trunc('month', fec_ingreso) AS month,
+               sum(peso_neto)/1000.0 AS tonnes,
+               count(*) AS trips
+        FROM retirados
+        WHERE fec_ingreso IS NOT NULL
+        GROUP BY 1 ORDER BY 1
+    """).df()
+
+
+def recovery_vs_landfill(con):
+    """Annual recovered tonnage (GEOCYCLE) vs landfilled tonnage, with ratio."""
+    return con.execute("""
+        WITH lf AS (
+            SELECT source_year AS year, sum(peso_neto)/1000.0 AS landfill_t
+            FROM transactions GROUP BY 1
+        ),
+        rc AS (
+            SELECT year(fec_ingreso) AS year, sum(peso_neto)/1000.0 AS recovery_t
+            FROM retirados WHERE fec_ingreso IS NOT NULL GROUP BY 1
+        )
+        SELECT lf.year,
+               lf.landfill_t,
+               COALESCE(rc.recovery_t, 0) AS recovery_t,
+               COALESCE(rc.recovery_t, 0) / lf.landfill_t * 100 AS recovery_pct
+        FROM lf LEFT JOIN rc USING (year)
+        ORDER BY lf.year
+    """).df()
+
+
+def retirados_kpis(con):
+    row = con.execute("""
+        SELECT count(*), sum(peso_neto)/1000.0, count(DISTINCT organizacion),
+               min(fec_ingreso), max(fec_ingreso)
+        FROM retirados
+    """).fetchone()
+    return {"trips": row[0] or 0, "tonnes": row[1] or 0.0,
+            "orgs": row[2] or 0, "first_dt": row[3], "last_dt": row[4]}
+
+
+# --- data quality ------------------------------------------------------------
+def quality_report(con):
+    from config import FILES
+    out = {"files": [], "transactions": {}, "retirados": {}}
+
+    logged = dict(con.execute(
+        "SELECT source_file, rows_loaded FROM pipeline_log").fetchall())
+    for spec in FILES:
+        out["files"].append({
+            "file": spec["match"],
+            "loaded": logged.get(spec["match"], 0),
+            "spec_rows": spec["spec_rows"],
+            "match": logged.get(spec["match"], 0) == spec["spec_rows"],
+        })
+
+    t = con.execute("""
+        SELECT count(*) total,
+               sum(CASE WHEN peso_neto = 0 THEN 1 ELSE 0 END) zero_net,
+               sum(CASE WHEN peso_neto < 0 THEN 1 ELSE 0 END) neg_net,
+               sum(CASE WHEN num_ticket IS NULL THEN 1 ELSE 0 END) null_ticket,
+               sum(CASE WHEN tipo_servicio IS NULL THEN 1 ELSE 0 END) null_servicio,
+               sum(CASE WHEN empresa IS NULL THEN 1 ELSE 0 END) null_empresa,
+               sum(CASE WHEN sector IS NULL THEN 1 ELSE 0 END) null_sector,
+               sum(CASE WHEN fec_ingreso IS NULL THEN 1 ELSE 0 END) null_fecha,
+               sum(CASE WHEN peso_neto IS NULL THEN 1 ELSE 0 END) null_neto
+        FROM transactions
+    """).fetchone()
+    cols = ["total", "zero_net", "neg_net", "null_ticket", "null_servicio",
+            "null_empresa", "null_sector", "null_fecha", "null_neto"]
+    out["transactions"] = dict(zip(cols, t))
+
+    dupes = con.execute("""
+        SELECT count(*) FROM (
+            SELECT num_ticket, source_year FROM transactions
+            GROUP BY 1, 2 HAVING count(*) > 1
+        )
+    """).fetchone()[0]
+    out["transactions"]["dup_ticket_year"] = dupes
+
+    out["date_range_by_year"] = con.execute("""
+        SELECT source_year AS year, min(fec_ingreso) AS first_dt,
+               max(fec_ingreso) AS last_dt, count(*) AS rows
+        FROM transactions GROUP BY 1 ORDER BY 1
+    """).df()
+
+    r = con.execute("""
+        SELECT count(*) total,
+               sum(CASE WHEN peso_neto <= 0 THEN 1 ELSE 0 END) nonpos_net,
+               sum(CASE WHEN fec_ingreso IS NULL THEN 1 ELSE 0 END) null_fecha,
+               sum(CASE WHEN organizacion IS NULL THEN 1 ELSE 0 END) null_org
+        FROM retirados
+    """).fetchone()
+    out["retirados"] = dict(zip(["total", "nonpos_net", "null_fecha", "null_org"], r))
+    return out
+
+
+# --- pipeline status ---------------------------------------------------------
+def pipeline_status(con):
+    return con.execute("""
+        SELECT source_file, rows_loaded, loaded_at
+        FROM pipeline_log ORDER BY source_file
+    """).df()
+
+
+def table_counts(con):
+    return {
+        "transactions": con.execute("SELECT count(*) FROM transactions").fetchone()[0],
+        "retirados": con.execute("SELECT count(*) FROM retirados").fetchone()[0],
+    }
