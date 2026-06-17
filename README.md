@@ -112,11 +112,26 @@ scpd-analytics/
 ├── analysis/
 │   └── queries.py            # all analytics as named SQL functions
 ├── dashboard/
-│   ├── app.py                # entry: pipeline UI or dashboard home
-│   ├── db.py / state.py / theme.py
-│   └── pages/                # Overview, Service Types, Operators, GEOCYCLE,
-│                             #   Data Quality, Settings
+│   ├── app.py                # entry: pipeline UI, then grouped st.navigation
+│   ├── db.py / state.py / theme.py / style.py / ask_engine.py
+│   └── pages/                # Executive Summary, Overview, Service Types,
+│                             #   Operators, GEOCYCLE, Ask the Data,
+│                             #   Data Quality & Catalog, Settings
 └── data/                     # scpd.duckdb + raw/ (git-ignored)
+
+The sidebar uses a **nested/grouped navigation** (`st.navigation`):
+*Start here* (Executive Summary) · *The story* (Overview → Service Types →
+Operators → GEOCYCLE) · *Explore* (Ask the Data) · *Trust & data* (Data Quality
+& Catalog) · *System* (Settings).
+
+### Ask the Data
+
+A conversational page: a grouped list of suggested questions (volume, service
+mix, operators, recovery, quality), each mapped to a DuckDB-backed answer
+(sentence + chart/table). Free-text questions are routed to the closest
+suggestion by keyword — so it works **fully offline, no API key**. A gated hook
+(`ASK_AI_ENABLED` in `dashboard/ask_engine.py`) is left for optional Claude
+NL→SQL later, mirroring the gated Postgres export.
 ```
 
 ## Source data catalog

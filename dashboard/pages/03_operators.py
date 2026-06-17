@@ -13,7 +13,6 @@ from theme import SEQUENCE, COLORS, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
 
-st.set_page_config(page_title="Operators & Fleet · SCPD", page_icon="🚛", layout="wide")
 con = get_db()
 inject_css()
 ensure_loaded(con)

@@ -11,7 +11,6 @@ from state import ensure_loaded
 from analysis import queries as q
 from style import inject_css, render_header
 
-st.set_page_config(page_title="Data Quality · SCPD", page_icon="🔎", layout="wide")
 con = get_db()
 inject_css()
 ensure_loaded(con)

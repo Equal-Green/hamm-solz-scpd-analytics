@@ -14,7 +14,6 @@ from theme import YEAR_COLORS, SERVICE_COLORS, SEQUENCE, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
 
-st.set_page_config(page_title="Overview · SCPD", page_icon="📊", layout="wide")
 con = get_db()
 inject_css()
 ensure_loaded(con)

@@ -22,7 +22,6 @@ from state import is_loaded, loaded_files
 from style import inject_css, render_header
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
-from analysis import queries as q
 from pipeline.load import run_pipeline
 
 st.set_page_config(page_title="SCPD Analytics — Guayaquil",
@@ -82,43 +81,33 @@ def _run_pipeline_ui():
         st.rerun()
 
 
-def _home():
-    render_header(
-        "Guayaquil Solid Waste",
-        "Las Iguanas landfill · Consorcio URVASEO · CIRCULAREP — "
-        "2023–2025 weighbridge records.",
-    )
-
-    k = q.kpis(con)
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Total trips", f"{k['trips']:,}")
-    c2.metric("Net tonnage", f"{k['tonnes']:,.0f} t")
-    c3.metric("Avg per trip", f"{k['avg_kg']:,.0f} kg")
-    rng = (f"{k['first_dt']:%Y}–{k['last_dt']:%Y}" if k["first_dt"] else "—")
-    c4.metric("Date range", rng)
-
-    st.divider()
-    st.subheader("Pages")
-    st.markdown(
-        "- **Overview** — volume & tonnage trends\n"
-        "- **Service Types** — by service category + anomaly callout\n"
-        "- **Operators & Fleet** — companies and vehicle classes\n"
-        "- **GEOCYCLE Recovery** — material recovery (inverted weights)\n"
-        "- **Data Quality** — row counts, nulls, flags\n"
-        "- **Settings** — pipeline status, re-run, cloud export\n\n"
-        "Use the sidebar to navigate."
-    )
-
-    an = q.servicios_especial_anomaly(con)
-    if an["pct"]:
-        st.info(
-            f"⚠️ **Anomaly:** SERVICIOS ESPECIAL trips jumped "
-            f"**{an['pct']:+.0f}%** from 2023 ({an['y2023']:,}) to "
-            f"2024 ({an['y2024']:,}). See the Service Types page."
-        )
-
-
-if is_loaded(con):
-    _home()
-else:
+# --- Route: first-run setup, or the grouped multipage app -------------------
+if not is_loaded(con):
     _run_pipeline_ui()
+    st.stop()
+
+# Sidebar brand block above the nested navigation.
+with st.sidebar:
+    st.markdown(
+        '<div class="scpd-brand">🗑️ <span>SCPD Analytics</span>'
+        '<div class="scpd-brand-sub">Guayaquil · Las Iguanas</div></div>',
+        unsafe_allow_html=True,
+    )
+
+home = st.Page("pages/00_home.py", title="Executive Summary", icon="🏠", default=True)
+overview = st.Page("pages/01_overview.py", title="Overview", icon="📈")
+services = st.Page("pages/02_service_types.py", title="Service Types", icon="🧾")
+operators = st.Page("pages/03_operators.py", title="Operators & Fleet", icon="🚛")
+geocycle = st.Page("pages/04_geocycle.py", title="GEOCYCLE Recovery", icon="♻️")
+ask = st.Page("pages/07_ask.py", title="Ask the Data", icon="💬")
+quality = st.Page("pages/05_data_quality.py", title="Data Quality & Catalog", icon="🔎")
+settings = st.Page("pages/06_settings.py", title="Settings", icon="⚙️")
+
+nav = st.navigation({
+    "Start here": [home],
+    "The story": [overview, services, operators, geocycle],
+    "Explore": [ask],
+    "Trust & data": [quality],
+    "System": [settings],
+})
+nav.run()

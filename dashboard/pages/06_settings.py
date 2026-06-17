@@ -15,7 +15,6 @@ from config import DUCKDB_PATH, ZIP_PATH
 from pipeline.load import run_pipeline, reset_pipeline
 from pipeline.export import pg_export, CLOUD_EXPORT_ENABLED
 
-st.set_page_config(page_title="Settings · SCPD", page_icon="⚙️", layout="wide")
 con = get_db()
 inject_css()
 

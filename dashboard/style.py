@@ -78,6 +78,18 @@ h3 {{ font-size: 1.12rem !important; font-weight: 700 !important; }}
     background: {SURFACE}; border-right: 1px solid {BORDER};
 }}
 [data-testid="stSidebar"] [data-testid="stSidebarNav"] a {{ border-radius: 8px; }}
+/* Nested-nav section labels */
+[data-testid="stSidebarNav"] ul {{ margin-top: .1rem; }}
+.scpd-brand {{
+    font-weight: 800; color: {NAVY}; font-size: 1.18rem; line-height: 1.1;
+    padding: .2rem .2rem .8rem .2rem; border-bottom: 1px solid {BORDER};
+    margin-bottom: .4rem; display: flex; flex-direction: column;
+}}
+.scpd-brand span {{ color: {NAVY}; }}
+.scpd-brand-sub {{
+    font-size: .72rem; font-weight: 600; color: {MUTED};
+    text-transform: uppercase; letter-spacing: .08em; margin-top: .2rem;
+}}
 
 /* Buttons */
 .stButton > button, [data-testid="stBaseButton-primary"] {{
