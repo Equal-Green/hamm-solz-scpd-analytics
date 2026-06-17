@@ -77,3 +77,58 @@ c1.metric("Total rows", f"{r['total']:,}")
 c2.metric("Non-positive net", f"{r['nonpos_net']:,}",
           help="net recovered <= 0")
 c3.metric("Null date / org", f"{r['null_fecha']:,} / {r['null_org']:,}")
+
+# --- Full source-data catalog (entire INFORMACIÓN folder) --------------------
+st.divider()
+st.subheader("Source data catalog — INFORMACIÓN folder")
+st.caption(
+    "Data model (sheets, columns) and row counts for every spreadsheet in the "
+    "source ZIP — not just the four pesaje files loaded into DuckDB."
+)
+
+from pipeline.catalog import build_catalog  # noqa: E402
+
+if q.catalog_count(con) == 0:
+    st.info("The catalog hasn't been built yet. Scanning the full folder takes "
+            "~30 seconds (it reads every spreadsheet in the ZIP).")
+    if st.button("📇 Scan INFORMACIÓN folder & build catalog", type="primary"):
+        box = st.status("Scanning…", expanded=True)
+        build_catalog(con, on_status=lambda m: box.update(label=m))
+        box.update(label="Catalog built.", state="complete")
+        st.rerun()
+else:
+    tot = q.catalog_totals(con)
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Spreadsheets", f"{tot['files']:,}")
+    c2.metric("Sheets / tabs", f"{tot['sheets']:,}")
+    c3.metric("Total rows (all)", f"{tot['rows']:,}")
+    c4.metric("Loaded to DuckDB", "4 files")
+
+    summary = q.catalog_summary(con)
+    show = summary.rename(columns={
+        "folder": "Folder", "file_name": "File", "file_type": "Type",
+        "size_mb": "Size (MB)", "sheets": "Sheets", "total_rows": "Total rows",
+        "loaded_table": "DuckDB table"})
+    st.dataframe(show, use_container_width=True, hide_index=True)
+
+    st.markdown("**Per-file data model** — expand a file for its sheets and columns.")
+    for fname in summary["file_name"]:
+        loaded = summary.loc[summary["file_name"] == fname, "loaded_table"].iloc[0]
+        tag = "  ·  ✅ loaded" if isinstance(loaded, str) and loaded else ""
+        with st.expander(f"{fname}{tag}"):
+            sheets = q.catalog_sheets(con, fname)
+            for _, srow in sheets.iterrows():
+                badge = f" → `{srow['loaded_table']}`" if srow["loaded_table"] else ""
+                st.markdown(
+                    f"**{srow['sheet_name']}**{badge} — "
+                    f"{srow['n_columns']} cols × {srow['n_rows']:,} rows")
+                if srow["columns"] and srow["columns"] != "[]":
+                    import json
+                    cols = json.loads(srow["columns"])
+                    st.caption(", ".join(cols) if cols else "—")
+
+    if st.button("🔄 Rebuild catalog"):
+        box = st.status("Rescanning…", expanded=True)
+        build_catalog(con, on_status=lambda m: box.update(label=m))
+        box.update(label="Catalog rebuilt.", state="complete")
+        st.rerun()

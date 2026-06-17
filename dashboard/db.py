@@ -17,6 +17,7 @@ if _ROOT not in sys.path:
 
 from config import DUCKDB_PATH  # noqa: E402
 from pipeline.load import SCHEMA  # noqa: E402
+from pipeline.catalog import CATALOG_SCHEMA  # noqa: E402
 
 
 @st.cache_resource
@@ -26,4 +27,5 @@ def get_db():
     os.makedirs(os.path.dirname(DUCKDB_PATH), exist_ok=True)
     con = duckdb.connect(DUCKDB_PATH)
     con.execute(SCHEMA)
+    con.execute(CATALOG_SCHEMA)
     return con

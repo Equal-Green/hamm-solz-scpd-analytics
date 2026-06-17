@@ -119,6 +119,16 @@ scpd-analytics/
 └── data/                     # scpd.duckdb + raw/ (git-ignored)
 ```
 
+## Source data catalog
+
+The **Data Quality** page includes a catalog of **every spreadsheet in the
+INFORMACIÓN folder** — not just the four pesaje files loaded into DuckDB. It
+profiles all 20 workbooks (127 sheets/tabs total) and reports each sheet's
+column model and row count, tagging the four SCPD files with their DuckDB
+table. Build it from the Data Quality page (one-time ~30 s scan; the result is
+stored in a `data_catalog` table). The big SCPD sheets reuse their known counts
+rather than re-parsing ~450 MB of XML.
+
 ## Re-running the pipeline
 
 The pipeline is idempotent: files already in `pipeline_log` are skipped. To force

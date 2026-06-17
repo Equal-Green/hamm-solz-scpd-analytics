@@ -249,6 +249,41 @@ def pipeline_status(con):
     """).df()
 
 
+# --- data catalog (full INFORMACIÓN folder) ---------------------------------
+def catalog_count(con):
+    return con.execute("SELECT count(*) FROM data_catalog").fetchone()[0]
+
+
+def catalog_summary(con):
+    return con.execute("""
+        SELECT folder, file_name, file_type,
+               max(size_mb) AS size_mb,
+               count(*) AS sheets,
+               sum(n_rows) AS total_rows,
+               max(loaded_table) AS loaded_table
+        FROM data_catalog
+        GROUP BY 1, 2, 3 ORDER BY folder, file_name
+    """).df()
+
+
+def catalog_sheets(con, file_name=None):
+    where, params = ("", [])
+    if file_name:
+        where, params = ("WHERE file_name = ?", [file_name])
+    return con.execute(f"""
+        SELECT sheet_name, n_columns, n_rows, columns, loaded_table
+        FROM data_catalog {where} ORDER BY id
+    """, params).df()
+
+
+def catalog_totals(con):
+    row = con.execute("""
+        SELECT count(DISTINCT file_name), count(*), sum(n_rows)
+        FROM data_catalog
+    """).fetchone()
+    return {"files": row[0] or 0, "sheets": row[1] or 0, "rows": row[2] or 0}
+
+
 def table_counts(con):
     return {
         "transactions": con.execute("SELECT count(*) FROM transactions").fetchone()[0],
