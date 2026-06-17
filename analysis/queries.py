@@ -249,6 +249,74 @@ def pipeline_status(con):
     """).df()
 
 
+# --- geo & routes ------------------------------------------------------------
+def has_routes(con):
+    row = con.execute(
+        "SELECT count(*) FROM transactions WHERE zona IS NOT NULL").fetchone()
+    return (row[0] or 0) > 0
+
+
+def route_kpis(con):
+    row = con.execute("""
+        SELECT count(DISTINCT zona), count(DISTINCT sub_zona),
+               count(DISTINCT micro_ruta),
+               count(*) FILTER (WHERE micro_ruta IS NOT NULL) * 1.0 / count(*)
+        FROM transactions
+    """).fetchone()
+    return {"zonas": row[0] or 0, "sub_zonas": row[1] or 0,
+            "micro_rutas": row[2] or 0, "route_coverage": (row[3] or 0) * 100}
+
+
+def by_zona(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT zona, count(*) AS trips, sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions WHERE zona IS NOT NULL {yc}
+        GROUP BY 1 ORDER BY tonnes DESC
+    """, yp).df()
+
+
+def zona_subzona_tonnage(con, year=None):
+    """Hierarchical zona → sub_zona tonnage (for treemap/sunburst)."""
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT zona, sub_zona, sum(peso_neto)/1000.0 AS tonnes, count(*) AS trips
+        FROM transactions
+        WHERE zona IS NOT NULL AND sub_zona IS NOT NULL {yc}
+        GROUP BY 1, 2 ORDER BY tonnes DESC
+    """, yp).df()
+
+
+def top_subzonas(con, year=None, n=15):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT sub_zona, zona, count(*) AS trips, sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions WHERE sub_zona IS NOT NULL {yc}
+        GROUP BY 1, 2 ORDER BY tonnes DESC LIMIT {int(n)}
+    """, yp).df()
+
+
+def top_micro_routes(con, year=None, n=15):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT micro_ruta, any_value(zona) AS zona, any_value(sub_zona) AS sub_zona,
+               count(*) AS trips, sum(peso_neto)/1000.0 AS tonnes,
+               avg(peso_neto) AS avg_kg
+        FROM transactions WHERE micro_ruta IS NOT NULL {yc}
+        GROUP BY 1 ORDER BY trips DESC LIMIT {int(n)}
+    """, yp).df()
+
+
+def subzona_month_heatmap(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT sub_zona, mes, sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions
+        WHERE sub_zona IS NOT NULL AND mes IS NOT NULL {yc}
+        GROUP BY 1, 2
+    """, yp).df()
+
+
 # --- data catalog (full INFORMACIÓN folder) ---------------------------------
 def catalog_count(con):
     return con.execute("SELECT count(*) FROM data_catalog").fetchone()[0]

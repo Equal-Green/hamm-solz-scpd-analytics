@@ -29,8 +29,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     peso_neto FLOAT,
     fec_ingreso TIMESTAMP,
     mes INTEGER,
-    anio INTEGER
+    anio INTEGER,
+    zona VARCHAR,
+    sub_zona VARCHAR,
+    micro_ruta VARCHAR
 );
+-- Route columns added after the initial release; ensure older DBs get them.
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS zona VARCHAR;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS sub_zona VARCHAR;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS micro_ruta VARCHAR;
 CREATE TABLE IF NOT EXISTS retirados (
     id INTEGER,
     num_ticket VARCHAR,
@@ -148,18 +155,21 @@ def _load_transactions(con, spec, xlsx_path, id_start, progress=None):
             fec,
             fec.month if fec else None,
             fec.year if fec else None,
+            _to_str(get(cells, fi, "zona")),
+            _to_str(get(cells, fi, "sub_zona")),
+            _to_str(get(cells, fi, "micro_ruta")),
         )
         state["id"] += 1
         batch.append(row)
         state["n"] += 1
         if len(batch) >= BATCH_SIZE:
-            _flush(con, "transactions", 14, batch)
+            _flush(con, "transactions", 17, batch)
             if progress:
                 progress(state["n"])
 
     stream_sheet(xlsx_path, spec["sheet"], spec["header_row"], on_field_index, on_record)
     if batch:
-        _flush(con, "transactions", 14, batch)
+        _flush(con, "transactions", 17, batch)
     if progress:
         progress(state["n"])
     return state["n"], state["id"]

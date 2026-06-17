@@ -134,6 +134,23 @@ suggestion by keyword — so it works **fully offline, no API key**. A gated hoo
 NL→SQL later, mirroring the gated Postgres export.
 ```
 
+## Geo & Routes
+
+Transactions carry a collection geography: **ZONA** (A / B / RURAL), **SUB_ZONA**
+(~30 zones like 12A), and **MICRO_RUTA** (~265 micro-route codes), ~97% / 48%
+populated. The **Geo & Routes** page charts this hierarchy — a zone→sub-zone
+treemap, tonnage by zone, top sub-zones, a sub-zone×month heatmap, and a
+micro-route leaderboard. No point geometry ships with the data, so there's no
+basemap yet; drop a sector/zone shapefile in later to unlock a choropleth (the
+page notes this hook).
+
+## All source tables in DuckDB
+
+Beyond the four typed pesaje tables, **Data Quality & Catalog → All source
+tables** loads *every* other tabular sheet in the archive (116 tables, incl.
+Catastro urbano at ~599K rows) as all-text `src_*` tables, registered in
+`source_tables`. One click; the whole archive becomes queryable.
+
 ## Source data catalog
 
 The **Data Quality** page includes a catalog of **every spreadsheet in the

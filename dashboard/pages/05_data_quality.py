@@ -131,3 +131,34 @@ else:
         build_catalog(con, on_status=lambda m: box.update(label=m))
         box.update(label="Catalog rebuilt.", state="complete")
         st.rerun()
+
+# --- Load all source tables into DuckDB --------------------------------------
+st.divider()
+st.subheader("All source tables in DuckDB")
+st.caption(
+    "Load every non-SCPD spreadsheet sheet as a queryable `src_*` table "
+    "(all-text). The four pesaje files already live in typed `transactions` / "
+    "`retirados` tables."
+)
+
+from pipeline.tables import load_all_tables, REGISTRY_SCHEMA  # noqa: E402
+con.execute(REGISTRY_SCHEMA)
+n_src = con.execute("SELECT count(*) FROM source_tables").fetchone()[0]
+
+cta = "📥 Load all source tables" if n_src == 0 else "🔄 Reload all source tables"
+if st.button(cta):
+    box = st.status("Loading every tabular sheet…", expanded=True)
+    n = load_all_tables(con, on_status=lambda m: box.update(label=m))
+    box.update(label=f"Loaded {n} source tables.", state="complete")
+    st.rerun()
+
+if n_src:
+    reg = con.execute("""
+        SELECT table_name, file_name, sheet_name, n_rows, n_columns
+        FROM source_tables ORDER BY n_rows DESC
+    """).df()
+    st.metric("Source tables loaded", f"{n_src:,}")
+    st.dataframe(reg, use_container_width=True, hide_index=True,
+                 column_config={"table_name": "DuckDB table", "file_name": "File",
+                                "sheet_name": "Sheet", "n_rows": "Rows",
+                                "n_columns": "Cols"})

@@ -187,6 +187,37 @@ def _avg_load(con):
     }
 
 
+def _top_zone(con):
+    df = q.by_zona(con)
+    if df.empty:
+        return {"summary": "Route/zone data isn't loaded. Re-run the pipeline."}
+    lead = df.iloc[0]
+    fig = px.bar(df, x="zona", y="tonnes", color="zona",
+                 color_discrete_sequence=SEQUENCE, text_auto=".2s")
+    fig.update_layout(showlegend=False)
+    fig.update_xaxes(type="category", title_text="")
+    return {
+        "summary": (
+            f"Zone **{lead['zona']}** produces the most waste — "
+            f"**{lead['tonnes']:,.0f} t** across {int(lead['trips']):,} trips."),
+        "fig": apply_layout(fig, "Net tonnage by collection zone"),
+    }
+
+
+def _busy_routes(con):
+    mr = q.top_micro_routes(con, n=15)
+    if mr.empty:
+        return {"summary": "Micro-route data isn't loaded. Re-run the pipeline."}
+    lead = mr.iloc[0]
+    return {
+        "summary": (
+            f"Micro-route **{lead['micro_ruta']}** is the busiest — "
+            f"**{int(lead['trips']):,} trips** ({lead['tonnes']:,.0f} t). "
+            f"Top 15 routes below."),
+        "table": mr[["micro_ruta", "zona", "sub_zona", "trips", "tonnes"]],
+    }
+
+
 def _data_quality(con):
     t = q.quality_report(con)["transactions"]
     return {
@@ -211,8 +242,16 @@ ASKS = [
      "run": _busiest_month},
     {"id": "top_sectors", "cat": "Volume & trends",
      "label": "Which city sectors generate the most waste?",
-     "kw": "sector sectors area neighborhood zone city where most waste",
+     "kw": "sector sectors area neighborhood city where most waste",
      "run": _top_sectors},
+    {"id": "top_zone", "cat": "Geo & routes",
+     "label": "Which collection zone produces the most waste?",
+     "kw": "zone zona geo area district most waste where region",
+     "run": _top_zone},
+    {"id": "busy_routes", "cat": "Geo & routes",
+     "label": "What are the busiest micro-routes?",
+     "kw": "route routes micro ruta busiest collection truck path most",
+     "run": _busy_routes},
     {"id": "special_spike", "cat": "Service mix",
      "label": "How big was the SERVICIOS ESPECIAL spike?",
      "kw": "servicios especial special spike anomaly jump increase 83 2024",

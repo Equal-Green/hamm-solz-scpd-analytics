@@ -92,6 +92,9 @@ FIELD_HEADERS = {
     "empresa": ["RAZON_SOCIAL"],              # operating company
     "organizacion": ["RAZON_SOCIAL"],         # GEOCYCLE org name (retirados)
     "sector": ["SECTOR"],
+    "zona": ["ZONA"],                          # collection zone (A / B / RURAL)
+    "sub_zona": ["SUB_ZONA"],                  # collection sub-zone (e.g. 12A)
+    "micro_ruta": ["MICRO_RUTA"],              # micro-route code (e.g. 14A-02)
     "peso_ingreso": ["PESO_INGRESO"],
     "fec_ingreso": ["FEC_INGRESO"],
     "peso_salida": ["PESO_SALIDA"],
@@ -107,6 +110,9 @@ FIELD_FALLBACK_IDX = {
     "empresa": 8,
     "organizacion": 8,
     "sector": 32,
+    "zona": 18,
+    "sub_zona": 19,
+    "micro_ruta": 17,
     "peso_ingreso": 24,
     "fec_ingreso": 27,
     "peso_salida": 28,

@@ -101,13 +101,14 @@ overview = st.Page("pages/01_overview.py", title="Overview", icon="📈")
 services = st.Page("pages/02_service_types.py", title="Service Types", icon="🧾")
 operators = st.Page("pages/03_operators.py", title="Operators & Fleet", icon="🚛")
 geocycle = st.Page("pages/04_geocycle.py", title="GEOCYCLE Recovery", icon="♻️")
+geo = st.Page("pages/08_geo_routes.py", title="Geo & Routes", icon="🗺️")
 ask = st.Page("pages/07_ask.py", title="Ask the Data", icon="💬")
 quality = st.Page("pages/05_data_quality.py", title="Data Quality & Catalog", icon="🔎")
 settings = st.Page("pages/06_settings.py", title="Settings", icon="⚙️")
 
 nav = st.navigation({
     "Start here": [home],
-    "The story": [overview, services, operators, geocycle],
+    "The story": [overview, services, operators, geocycle, geo],
     "Explore": [ask],
     "Trust & data": [quality],
     "System": [settings],
