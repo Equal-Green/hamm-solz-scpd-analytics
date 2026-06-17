@@ -138,11 +138,14 @@ NL→SQL later, mirroring the gated Postgres export.
 
 Transactions carry a collection geography: **ZONA** (A / B / RURAL), **SUB_ZONA**
 (~30 zones like 12A), and **MICRO_RUTA** (~265 micro-route codes), ~97% / 48%
-populated. The **Geo & Routes** page charts this hierarchy — a zone→sub-zone
+populated. The **Geo & Routes** page opens with a **real map**: a choropleth of the
+collection **sub-zone polygons** colored by net tonnage (or trips), with the
+**472 day/night collection routes** overlaid — parsed from the source KML
+(`RUTAS_RECOLECCION, ZONAS Y SUZONAS.kml`, extracted from the streaming ZIP by
+`analysis/geo.py`). Below the map it charts the hierarchy — a zone→sub-zone
 treemap, tonnage by zone, top sub-zones, a sub-zone×month heatmap, and a
-micro-route leaderboard. No point geometry ships with the data, so there's no
-basemap yet; drop a sector/zone shapefile in later to unlock a choropleth (the
-page notes this hook).
+micro-route leaderboard. (Basemap tiles need an internet connection; the shapes
+render offline.)
 
 ## All source tables in DuckDB
 

@@ -5,6 +5,7 @@ for _p in (_here, os.path.dirname(_here), os.path.dirname(os.path.dirname(_here)
         sys.path.insert(0, _p)
 
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
 from db import get_db
@@ -12,6 +13,7 @@ from state import ensure_loaded
 from style import inject_css, render_header
 from theme import COLORS, SEQUENCE, apply_layout
 from analysis import queries as q
+from analysis import geo as geomod
 
 con = get_db()
 inject_css()
@@ -44,11 +46,62 @@ years = q.years(con)
 year = st.selectbox("Filter by year", ["All"] + [str(y) for y in years])
 yf = None if year == "All" else int(year)
 
-st.caption(
-    "No point geometry ships with the source data, so this is a spatial "
-    "*hierarchy* (zone → sub-zone → micro-route). Drop a sector/zone shapefile "
-    "in later to unlock a true choropleth map."
-)
+# --- Real map from the collection-routes KML --------------------------------
+@st.cache_resource
+def _geometry():
+    geomod.ensure_kml()
+    polys, routes = geomod.parse_kml()
+    return polys, routes, geomod.subzone_geojson(polys), geomod.center(polys, routes)
+
+
+st.subheader("🗺️ Collection map — sub-zones & routes")
+try:
+    polys, routes, gj, ctr = _geometry()
+    mc1, mc2 = st.columns([1, 1])
+    metric = mc1.radio("Color sub-zones by", ["Net tonnage", "Trips"],
+                       horizontal=True, label_visibility="collapsed")
+    show_routes = mc2.toggle("Show collection routes", value=True)
+    zcol = "tonnes" if metric == "Net tonnage" else "trips"
+
+    geo_df = q.subzona_geo(con, yf)
+    fig_map = go.Figure(go.Choroplethmapbox(
+        geojson=gj, locations=geo_df["sub_zona"], z=geo_df[zcol],
+        featureidkey="id", colorscale="YlOrRd", marker_opacity=0.72,
+        marker_line_width=0.6, marker_line_color="#141414",
+        colorbar=dict(title="t" if zcol == "tonnes" else "trips"),
+        hovertemplate="Sub-zone %{location}<br>%{z:,.0f}<extra></extra>"))
+
+    if show_routes:
+        for shift, color in (("DIURN", COLORS["secondary"]), ("NOCTURN", COLORS["iron"])):
+            lon, lat = [], []
+            for r in routes:
+                if r["name"].upper().startswith(shift):
+                    lon += r["lon"] + [None]
+                    lat += r["lat"] + [None]
+            if lon:
+                fig_map.add_trace(go.Scattermapbox(
+                    lon=lon, lat=lat, mode="lines",
+                    line=dict(width=1.1, color=color),
+                    name="Day routes" if shift == "DIURN" else "Night routes",
+                    hoverinfo="skip"))
+
+    fig_map.update_layout(
+        mapbox_style="carto-positron", mapbox_zoom=10.3,
+        mapbox_center=ctr, height=620,
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(orientation="h", y=0.99, x=0.01,
+                    bgcolor="rgba(255,255,255,.7)"),
+        font=dict(family="Inter", color="#141414"))
+    st.plotly_chart(fig_map, use_container_width=True)
+    st.caption(
+        f"{len(gj['features'])} sub-zone polygons and {len(routes)} collection "
+        "routes from the source KML, over OpenStreetMap. Categories without a "
+        "mapped polygon (INDUSTRIA, MERCADO, SERVICIOS ESPECIALES, …) aren't "
+        "shaded. Tiles need an internet connection.")
+except Exception as e:  # noqa: BLE001
+    st.warning(f"Map geometry unavailable: {e}")
+
+st.divider()
 
 # Hierarchy: zona → sub_zona treemap
 zs = q.zona_subzona_tonnage(con, yf)

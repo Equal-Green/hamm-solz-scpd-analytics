@@ -101,7 +101,8 @@ else:
     c1.metric("Spreadsheets", f"{tot['files']:,}")
     c2.metric("Sheets / tabs", f"{tot['sheets']:,}")
     c3.metric("Total rows (all)", f"{tot['rows']:,}")
-    c4.metric("Loaded to DuckDB", "4 files")
+    c4.metric("Files in DuckDB", f"{tot['files_in_duckdb']}/{tot['files']}",
+              help=f"{tot['src_tables']} src_* tables + 2 typed tables")
 
     summary = q.catalog_summary(con)
     show = summary.rename(columns={
@@ -113,11 +114,12 @@ else:
     st.markdown("**Per-file data model** — expand a file for its sheets and columns.")
     for fname in summary["file_name"]:
         loaded = summary.loc[summary["file_name"] == fname, "loaded_table"].iloc[0]
-        tag = "  ·  ✅ loaded" if isinstance(loaded, str) and loaded else ""
+        tag = "  ·  ✅ in DuckDB" if isinstance(loaded, str) and loaded != "—" else ""
         with st.expander(f"{fname}{tag}"):
             sheets = q.catalog_sheets(con, fname)
             for _, srow in sheets.iterrows():
-                badge = f" → `{srow['loaded_table']}`" if srow["loaded_table"] else ""
+                tbl = srow["loaded_table"] or srow.get("src_table")
+                badge = f" → `{tbl}`" if tbl else ""
                 st.markdown(
                     f"**{srow['sheet_name']}**{badge} — "
                     f"{srow['n_columns']} cols × {srow['n_rows']:,} rows")

@@ -307,6 +307,17 @@ def top_micro_routes(con, year=None, n=15):
     """, yp).df()
 
 
+def subzona_geo(con, year=None):
+    """Per sub-zone trips/tonnage (all sub-zones) for the choropleth."""
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT sub_zona, count(*) AS trips, sum(peso_neto)/1000.0 AS tonnes,
+               avg(peso_neto) AS avg_kg
+        FROM transactions WHERE sub_zona IS NOT NULL {yc}
+        GROUP BY 1
+    """, yp).df()
+
+
 def subzona_month_heatmap(con, year=None):
     yc, yp = _year_clause(year)
     return con.execute(f"""
@@ -322,25 +333,58 @@ def catalog_count(con):
     return con.execute("SELECT count(*) FROM data_catalog").fetchone()[0]
 
 
+def _has_source_tables(con):
+    return con.execute(
+        "SELECT count(*) FROM information_schema.tables "
+        "WHERE table_name = 'source_tables'").fetchone()[0] > 0
+
+
 def catalog_summary(con):
+    """Per-file summary; the DuckDB-table column reflects the typed SCPD tables
+    AND the generic src_* tables loaded from every other sheet."""
+    if _has_source_tables(con):
+        return con.execute("""
+            WITH src AS (
+                SELECT file_name, count(*) AS n, max(table_name) AS one
+                FROM source_tables GROUP BY 1
+            )
+            SELECT c.folder, c.file_name, c.file_type,
+                   max(c.size_mb) AS size_mb,
+                   count(*) AS sheets,
+                   sum(c.n_rows) AS total_rows,
+                   COALESCE(
+                       max(c.loaded_table),
+                       CASE WHEN any_value(src.n) = 1 THEN any_value(src.one)
+                            WHEN any_value(src.n) > 1
+                                 THEN any_value(src.n)::VARCHAR || ' tables'
+                       END,
+                       '—'
+                   ) AS loaded_table
+            FROM data_catalog c
+            LEFT JOIN src ON src.file_name = c.file_name
+            GROUP BY c.folder, c.file_name, c.file_type
+            ORDER BY c.folder, c.file_name
+        """).df()
     return con.execute("""
-        SELECT folder, file_name, file_type,
-               max(size_mb) AS size_mb,
-               count(*) AS sheets,
-               sum(n_rows) AS total_rows,
-               max(loaded_table) AS loaded_table
-        FROM data_catalog
-        GROUP BY 1, 2, 3 ORDER BY folder, file_name
+        SELECT folder, file_name, file_type, max(size_mb) AS size_mb,
+               count(*) AS sheets, sum(n_rows) AS total_rows,
+               COALESCE(max(loaded_table), '—') AS loaded_table
+        FROM data_catalog GROUP BY 1, 2, 3 ORDER BY folder, file_name
     """).df()
 
 
 def catalog_sheets(con, file_name=None):
     where, params = ("", [])
     if file_name:
-        where, params = ("WHERE file_name = ?", [file_name])
+        where, params = ("WHERE c.file_name = ?", [file_name])
+    join = ("LEFT JOIN source_tables s "
+            "ON s.file_name = c.file_name AND s.sheet_name = c.sheet_name"
+            if _has_source_tables(con) else "")
+    src_col = "s.table_name AS src_table" if _has_source_tables(con) else "NULL AS src_table"
     return con.execute(f"""
-        SELECT sheet_name, n_columns, n_rows, columns, loaded_table
-        FROM data_catalog {where} ORDER BY id
+        SELECT c.sheet_name, c.n_columns, c.n_rows, c.columns, c.loaded_table,
+               {src_col}
+        FROM data_catalog c {join} {where} ORDER BY c.id
     """, params).df()
 
 
@@ -349,7 +393,20 @@ def catalog_totals(con):
         SELECT count(DISTINCT file_name), count(*), sum(n_rows)
         FROM data_catalog
     """).fetchone()
-    return {"files": row[0] or 0, "sheets": row[1] or 0, "rows": row[2] or 0}
+    out = {"files": row[0] or 0, "sheets": row[1] or 0, "rows": row[2] or 0,
+           "src_tables": 0, "files_in_duckdb": 0}
+    scpd_files = con.execute(
+        "SELECT count(DISTINCT file_name) FROM data_catalog "
+        "WHERE loaded_table IS NOT NULL").fetchone()[0] or 0
+    if _has_source_tables(con):
+        out["src_tables"] = con.execute(
+            "SELECT count(*) FROM source_tables").fetchone()[0] or 0
+        src_files = con.execute(
+            "SELECT count(DISTINCT file_name) FROM source_tables").fetchone()[0] or 0
+        out["files_in_duckdb"] = scpd_files + src_files
+    else:
+        out["files_in_duckdb"] = scpd_files
+    return out
 
 
 def table_counts(con):
