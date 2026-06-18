@@ -22,11 +22,11 @@ render_header(t("page.operators"), "Companies and vehicle classes delivering to 
 
 c1, c2 = st.columns(2)
 with c1:
-    year = st.selectbox("Year", ["All"] + [str(y) for y in q.years(con)])
+    year = st.selectbox(t("word.year"), [t("word.all")] + [str(y) for y in q.years(con)])
 with c2:
-    servicio = st.selectbox("Service type", ["All"] + q.services(con))
-yf = None if year == "All" else int(year)
-sf = None if servicio == "All" else servicio
+    servicio = st.selectbox(t("word.service_type"), [t("word.all")] + q.services(con))
+yf = None if year == t("word.all") else int(year)
+sf = None if servicio == t("word.all") else servicio
 
 top = q.top_empresas(con, yf, sf, n=10)
 

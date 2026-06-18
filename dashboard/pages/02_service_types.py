@@ -32,8 +32,8 @@ if an["pct"] is not None:
     )
 
 years = q.years(con)
-year = st.selectbox("Filter by year", ["All"] + [str(y) for y in years])
-yf = None if year == "All" else int(year)
+year = st.selectbox(t("word.filter_year"), [t("word.all")] + [str(y) for y in years])
+yf = None if year == t("word.all") else int(year)
 
 ss = q.service_summary(con, yf)
 col_a, col_b = st.columns(2)

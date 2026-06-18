@@ -30,9 +30,9 @@ recovered = rv["recovery_t"].sum()
 cur_div = recovered / landfilled * 100 if landfilled else 0
 
 c1, c2, c3 = st.columns(3)
-c1.metric("Landfilled (net)", f"{landfilled:,.0f} t")
-c2.metric("GEOCYCLE recovered", f"{recovered:,.0f} t")
-c3.metric("Current diversion rate", f"{cur_div:.2f}%")
+c1.metric(t("kpi.landfilled"), f"{landfilled:,.0f} t")
+c2.metric(t("kpi.geocycle_recovered"), f"{recovered:,.0f} t")
+c3.metric(t("kpi.current_diversion"), f"{cur_div:.2f}%")
 
 st.divider()
 st.subheader("Composition & diversion scenario")

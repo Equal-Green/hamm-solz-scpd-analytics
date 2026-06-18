@@ -48,13 +48,13 @@ fl = q.integrity_flags(con)
 dup = q.duplicate_weighings(con)
 total = fl["total"] or 1
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Duplicate weighings", f"{dup['groups']:,}",
+c1.metric(t("kpi.dup_weighings"), f"{dup['groups']:,}",
           help="Same plate + same day + identical net weight")
-c2.metric("Tare > gross", f"{fl['tare_gt_gross']:,}",
+c2.metric(t("kpi.tare_gross"), f"{fl['tare_gt_gross']:,}",
           help="PESO_SALIDA > PESO_INGRESO (inverted for a landfill trip)")
-c3.metric("Payload outliers", f"{fl['payload_outlier']:,}",
+c3.metric(t("kpi.payload_outliers"), f"{fl['payload_outlier']:,}",
           help="Net weight > 45,000 kg")
-c4.metric("Missing weight", f"{fl['missing_weight']:,}")
+c4.metric(t("kpi.missing_weight"), f"{fl['missing_weight']:,}")
 
 st.markdown("**Duplicate-weighing candidates** — same plate, same day, "
             "identical net weight:")

@@ -9,6 +9,7 @@ import streamlit as st
 from db import get_db
 from state import ensure_loaded
 from style import inject_css, render_header
+from i18n import t
 from analysis import queries as q
 
 con = get_db()
@@ -55,10 +56,10 @@ questions directly.
 )
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total trips", f"{k['trips']:,}")
-c2.metric("Net tonnage", f"{k['tonnes']:,.0f} t")
-c3.metric("Avg per trip", f"{k['avg_kg']:,.0f} kg")
-c4.metric("Period", f"{first_y}–{last_y}")
+c1.metric(t("kpi.total_trips"), f"{k['trips']:,}")
+c2.metric(t("kpi.net_tonnage"), f"{k['tonnes']:,.0f} t")
+c3.metric(t("kpi.avg_per_trip"), f"{k['avg_kg']:,.0f} kg")
+c4.metric(t("kpi.period"), f"{first_y}–{last_y}")
 
 st.divider()
 st.subheader("Key findings")

@@ -37,14 +37,14 @@ MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 k = q.route_kpis(con)
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Zones", f"{k['zonas']:,}")
-c2.metric("Sub-zones", f"{k['sub_zonas']:,}")
-c3.metric("Micro-routes", f"{k['micro_rutas']:,}")
-c4.metric("Route-tagged trips", f"{k['route_coverage']:.0f}%")
+c1.metric(t("kpi.zones"), f"{k['zonas']:,}")
+c2.metric(t("kpi.sub_zones"), f"{k['sub_zonas']:,}")
+c3.metric(t("kpi.micro_routes"), f"{k['micro_rutas']:,}")
+c4.metric(t("kpi.route_tagged"), f"{k['route_coverage']:.0f}%")
 
 years = q.years(con)
-year = st.selectbox("Filter by year", ["All"] + [str(y) for y in years])
-yf = None if year == "All" else int(year)
+year = st.selectbox(t("word.filter_year"), [t("word.all")] + [str(y) for y in years])
+yf = None if year == t("word.all") else int(year)
 
 # --- Real map from the collection-routes KML --------------------------------
 @st.cache_resource

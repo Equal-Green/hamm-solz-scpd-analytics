@@ -35,11 +35,11 @@ thr = round(med * 0.5)
 ul = q.underloaded(con, thr, yf)
 
 k1, k2, k3, k4 = st.columns(4)
-k1.metric("Median payload", f"{med:,.0f} kg")
-k2.metric("Under-loaded threshold", f"< {thr:,} kg")
+k1.metric(t("kpi.median_payload"), f"{med:,.0f} kg")
+k2.metric(t("kpi.under_threshold"), f"< {thr:,} kg")
 pct = ul["under"] / ul["total"] * 100 if ul["total"] else 0
-k3.metric("Under-loaded trips", f"{ul['under']:,}", f"{pct:.0f}% of trips")
-k4.metric("Tonnage in light trips", f"{ul['under_tonnes']:,.0f} t")
+k3.metric(t("kpi.under_trips"), f"{ul['under']:,}", f"{pct:.0f}% of trips")
+k4.metric(t("kpi.light_tonnage"), f"{ul['under_tonnes']:,.0f} t")
 
 st.caption(
     f"“Under-loaded” = net payload below {thr:,} kg (half the fleet median). "

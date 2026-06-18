@@ -23,10 +23,10 @@ render_header(t("page.overview"), "Volume and tonnage trends across 2023–2025.
 
 k = q.kpis(con)
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total trips", f"{k['trips']:,}")
-c2.metric("Total net tonnage", f"{k['tonnes']:,.0f} t")
-c3.metric("Avg per trip", f"{k['avg_kg']:,.0f} kg")
-c4.metric("Date range",
+c1.metric(t("kpi.total_trips"), f"{k['trips']:,}")
+c2.metric(t("kpi.total_net_tonnage"), f"{k['tonnes']:,.0f} t")
+c3.metric(t("kpi.avg_per_trip"), f"{k['avg_kg']:,.0f} kg")
+c4.metric(t("kpi.date_range"),
           f"{k['first_dt']:%Y}–{k['last_dt']:%Y}" if k["first_dt"] else "—")
 
 st.divider()

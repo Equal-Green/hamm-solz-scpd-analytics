@@ -29,10 +29,10 @@ st.info(
 
 rk = q.retirados_kpis(con)
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Recovery trips", f"{rk['trips']:,}")
-c2.metric("Recovered tonnage", f"{rk['tonnes']:,.0f} t")
-c3.metric("Organizations", f"{rk['orgs']:,}")
-c4.metric("Date range",
+c1.metric(t("kpi.recovery_trips"), f"{rk['trips']:,}")
+c2.metric(t("kpi.recovered_tonnage"), f"{rk['tonnes']:,.0f} t")
+c3.metric(t("kpi.organizations"), f"{rk['orgs']:,}")
+c4.metric(t("kpi.date_range"),
           f"{rk['first_dt']:%Y}–{rk['last_dt']:%Y}" if rk["first_dt"] else "—")
 
 st.divider()
