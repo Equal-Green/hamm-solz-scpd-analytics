@@ -63,9 +63,13 @@ TR = {
                          "ko": "연도별 필터"},
     "word.trips": {"en": "Trips", "es": "Viajes", "ko": "운행"},
     "word.tonnes": {"en": "tonnes", "es": "toneladas", "ko": "톤"},
-    "eyebrow.brand": {"en": "EQUALGREEN × FLAMING OWL",
-                      "es": "EQUALGREEN × FLAMING OWL",
-                      "ko": "EQUALGREEN × FLAMING OWL"},
+    "eyebrow.brand": {"en": "THE HAMM SOLZ × EQUALGREEN",
+                      "es": "THE HAMM SOLZ × EQUALGREEN",
+                      "ko": "THE HAMM SOLZ × EQUALGREEN"},
+    "page.cover": {"en": "Cover", "es": "Portada", "ko": "표지"},
+    "page.arch": {"en": "How it works", "es": "Cómo funciona", "ko": "작동 원리"},
+    "nav.about": {"en": "About this report", "es": "Sobre este informe",
+                  "ko": "보고서 정보"},
     # forecast page
     "fc.subtitle": {
         "en": "Tonnage trajectory and how long Las Iguanas has left.",

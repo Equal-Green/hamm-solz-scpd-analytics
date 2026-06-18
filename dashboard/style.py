@@ -153,11 +153,45 @@ hr {{ border-color: {BORDER}; }}
 """
 
 
+def hamm_wordmark(on_dark=False, height=34):
+    """Recreated THE HAMM Solz wordmark (client / customer brand)."""
+    the = "#2BB3F0" if on_dark else "#1B9FE0"
+    hamm = "#FFFFFF" if on_dark else "#1A1A1A"
+    solz = "#C7C4BD" if on_dark else "#5A5A5A"
+    tag = "#A6A6A6" if on_dark else "#3A3A3A"
+    ico = int(height * 0.62)
+    return (
+        f'<div style="display:inline-flex;flex-direction:column;line-height:1;">'
+        f'<div style="display:flex;align-items:center;gap:.16em;'
+        f'font-family:Arial,Helvetica,sans-serif;font-weight:800;'
+        f'font-size:{height}px;letter-spacing:-.01em;">'
+        f'<span style="color:{the};">THE</span>'
+        f'<svg width="{int(ico*1.2)}" height="{ico}" viewBox="0 0 26 20" '
+        f'style="margin:0 .05em;"><path d="M1 4h13l6 6-6 6H1l6-6z" fill="{the}"/>'
+        f'<path d="M11 1l7 7-7 7" fill="none" stroke="{hamm}" '
+        f'stroke-width="2.6"/></svg>'
+        f'<span style="color:{hamm};">HAMM</span>'
+        f'<span style="color:{solz};font-weight:700;font-size:.72em;'
+        f'align-self:flex-end;padding-bottom:.1em;margin-left:.1em;">Solz</span>'
+        f'</div><div style="color:{tag};font-family:Arial,sans-serif;'
+        f'font-weight:700;font-size:{max(9, int(height*0.32))}px;'
+        f'letter-spacing:.005em;margin-top:.3em;">'
+        f'Total Energy &amp; Environment Consultant</div></div>'
+    )
+
+
+def eg_logo_html(size=34):
+    if not _LOGO_URI:
+        return ""
+    return (f'<div style="width:{size}px;height:{size}px;border-radius:8px;'
+            f'background:url(\'{_LOGO_URI}\') center/cover;flex:0 0 auto;"></div>')
+
+
 def inject_css():
     st.markdown(_CSS, unsafe_allow_html=True)
 
 
-def render_header(title, subtitle="", eyebrow="EQUALGREEN × FLAMING OWL"):
+def render_header(title, subtitle="", eyebrow="THE HAMM SOLZ × EQUALGREEN"):
     """Branded hero banner with the EqualGreen mark and FO portal styling."""
     logo = '<div class="scpd-logo"></div>' if _LOGO_URI else ""
     sub = f'<div class="scpd-sub">{subtitle}</div>' if subtitle else ""

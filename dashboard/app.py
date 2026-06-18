@@ -98,7 +98,9 @@ with st.sidebar:
     )
 language_selector()
 
-home = st.Page("pages/00_home.py", title=t("page.exec"), icon="🏠", default=True)
+cover = st.Page("pages/cover.py", title=t("page.cover"), icon="📘", default=True)
+home = st.Page("pages/00_home.py", title=t("page.exec"), icon="🏠")
+architecture = st.Page("pages/architecture.py", title=t("page.arch"), icon="🧩")
 overview = st.Page("pages/01_overview.py", title=t("page.overview"), icon="📈")
 services = st.Page("pages/02_service_types.py", title=t("page.services"), icon="🧾")
 operators = st.Page("pages/03_operators.py", title=t("page.operators"), icon="🚛")
@@ -113,7 +115,7 @@ quality = st.Page("pages/05_data_quality.py", title=t("page.quality"), icon="�
 settings = st.Page("pages/06_settings.py", title=t("page.settings"), icon="⚙️")
 
 nav = st.navigation({
-    t("nav.start"): [home],
+    t("nav.start"): [cover, home, architecture],
     t("nav.story"): [overview, services, operators, geocycle, geo],
     t("nav.analysis"): [forecast, efficiency, integrity, diversion],
     t("nav.explore"): [ask],
