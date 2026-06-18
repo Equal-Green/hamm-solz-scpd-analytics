@@ -51,53 +51,91 @@ yf = None if year == "All" else int(year)
 def _geometry():
     geomod.ensure_kml()
     polys, routes = geomod.parse_kml()
-    return polys, routes, geomod.subzone_geojson(polys), geomod.center(polys, routes)
+    return (polys, routes, geomod.subzone_geojson(polys),
+            geomod.center(polys, routes),
+            geomod.assign_routes_to_subzones(polys, routes),
+            geomod.polygon_centroids(polys))
 
 
 st.subheader("🗺️ Collection map — sub-zones & routes")
 try:
-    polys, routes, gj, ctr = _geometry()
-    mc1, mc2 = st.columns([1, 1])
+    polys, routes, gj, ctr, route_subz, centroids = _geometry()
+    mapped_subz = sorted(centroids.keys())
+
+    mc1, mc2, mc3 = st.columns([1.1, 1.2, 1.1])
     metric = mc1.radio("Color sub-zones by", ["Net tonnage", "Trips"],
-                       horizontal=True, label_visibility="collapsed")
-    show_routes = mc2.toggle("Show collection routes", value=True)
+                       horizontal=True)
+    shift_pick = mc2.radio("Routes", ["Both", "Day", "Night", "Hide"],
+                           horizontal=True)
+    focus = mc3.selectbox("Focus sub-zone", ["All sub-zones"] + mapped_subz)
     zcol = "tonnes" if metric == "Net tonnage" else "trips"
+    focused = None if focus == "All sub-zones" else focus
+
+    # which route indices to draw, given shift + focus filters
+    want = {"Both": {"day", "night"}, "Day": {"day"},
+            "Night": {"night"}, "Hide": set()}[shift_pick]
+    shown = []
+    for i, r in enumerate(routes):
+        if geomod.route_shift(r["name"]) not in want:
+            continue
+        if focused and focused not in route_subz[i]:
+            continue
+        shown.append(i)
 
     geo_df = q.subzona_geo(con, yf)
     fig_map = go.Figure(go.Choroplethmapbox(
         geojson=gj, locations=geo_df["sub_zona"], z=geo_df[zcol],
-        featureidkey="id", colorscale="YlOrRd", marker_opacity=0.72,
+        featureidkey="id",
+        colorscale="YlOrRd",
+        marker_opacity=0.35 if focused else 0.72,
         marker_line_width=0.6, marker_line_color="#141414",
         colorbar=dict(title="t" if zcol == "tonnes" else "trips"),
         hovertemplate="Sub-zone %{location}<br>%{z:,.0f}<extra></extra>"))
 
-    if show_routes:
-        for shift, color in (("DIURN", COLORS["secondary"]), ("NOCTURN", COLORS["iron"])):
-            lon, lat = [], []
-            for r in routes:
-                if r["name"].upper().startswith(shift):
-                    lon += r["lon"] + [None]
-                    lat += r["lat"] + [None]
-            if lon:
+    # highlight the focused polygon outline
+    if focused:
+        for p in polys:
+            if geomod.normalize_subzone(p["name"]) == focused:
                 fig_map.add_trace(go.Scattermapbox(
-                    lon=lon, lat=lat, mode="lines",
-                    line=dict(width=1.1, color=color),
-                    name="Day routes" if shift == "DIURN" else "Night routes",
-                    hoverinfo="skip"))
+                    lon=p["lon"], lat=p["lat"], mode="lines",
+                    line=dict(width=3, color=COLORS["primary"]),
+                    name=f"Sub-zone {focused}", hoverinfo="skip"))
+                break
 
+    # route lines, split day/night for legend + color
+    for key, color, label in (("day", COLORS["secondary"], "Day routes"),
+                              ("night", COLORS["iron"], "Night routes")):
+        lon, lat = [], []
+        for i in shown:
+            if geomod.route_shift(routes[i]["name"]) == key:
+                lon += routes[i]["lon"] + [None]
+                lat += routes[i]["lat"] + [None]
+        if lon:
+            fig_map.add_trace(go.Scattermapbox(
+                lon=lon, lat=lat, mode="lines",
+                line=dict(width=1.6 if focused else 1.0, color=color),
+                name=label, hoverinfo="skip"))
+
+    if focused and focused in centroids:
+        m_center, m_zoom = centroids[focused], 13.2
+    else:
+        m_center, m_zoom = ctr, 10.3
     fig_map.update_layout(
-        mapbox_style="carto-positron", mapbox_zoom=10.3,
-        mapbox_center=ctr, height=620,
+        mapbox_style="carto-positron", mapbox_zoom=m_zoom,
+        mapbox_center=m_center, height=620,
         margin=dict(l=0, r=0, t=0, b=0),
         legend=dict(orientation="h", y=0.99, x=0.01,
-                    bgcolor="rgba(255,255,255,.7)"),
+                    bgcolor="rgba(255,255,255,.75)"),
         font=dict(family="Inter", color="#141414"))
     st.plotly_chart(fig_map, use_container_width=True)
+
+    scope = f"sub-zone **{focused}**" if focused else "all sub-zones"
     st.caption(
-        f"{len(gj['features'])} sub-zone polygons and {len(routes)} collection "
-        "routes from the source KML, over OpenStreetMap. Categories without a "
-        "mapped polygon (INDUSTRIA, MERCADO, SERVICIOS ESPECIALES, …) aren't "
-        "shaded. Tiles need an internet connection.")
+        f"Showing **{len(shown)}** of {len(routes)} routes ({shift_pick.lower()}) "
+        f"across {scope}. {len(gj['features'])} sub-zone polygons from the source "
+        "KML over OpenStreetMap; categories without a polygon "
+        "(INDUSTRIA, MERCADO, SERVICIOS ESPECIALES, …) aren't shaded. "
+        "Tiles need an internet connection.")
 except Exception as e:  # noqa: BLE001
     st.warning(f"Map geometry unavailable: {e}")
 

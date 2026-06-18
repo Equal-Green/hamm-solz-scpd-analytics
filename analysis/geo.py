@@ -115,6 +115,60 @@ def subzone_geojson(polygons):
     return {"type": "FeatureCollection", "features": feats}
 
 
+def route_shift(name):
+    """Day vs night from the route placemark name (DIURNO/DIURNA vs NOCTURNO)."""
+    return "night" if name.upper().startswith("NOCTURN") else "day"
+
+
+def _point_in_ring(lon, lat, ring):
+    inside = False
+    n = len(ring)
+    j = n - 1
+    for i in range(n):
+        xi, yi = ring[i]
+        xj, yj = ring[j]
+        if ((yi > lat) != (yj > lat)) and \
+                (lon < (xj - xi) * (lat - yi) / ((yj - yi) or 1e-12) + xi):
+            inside = not inside
+        j = i
+    return inside
+
+
+def polygon_centroids(polygons):
+    out = {}
+    for p in polygons:
+        if p["lon"]:
+            out[normalize_subzone(p["name"])] = {
+                "lon": sum(p["lon"]) / len(p["lon"]),
+                "lat": sum(p["lat"]) / len(p["lat"])}
+    return out
+
+
+def assign_routes_to_subzones(polygons, routes, sample=30):
+    """For each route, the set of sub-zones (normalized) it passes through,
+    via ray-casting a sample of its vertices against each polygon (bbox
+    pre-filtered). Lets the UI scope routes to a focused sub-zone."""
+    polys = []
+    for p in polygons:
+        ring = list(zip(p["lon"], p["lat"]))
+        if len(ring) >= 3:
+            polys.append((normalize_subzone(p["name"]), ring,
+                          min(p["lon"]), max(p["lon"]),
+                          min(p["lat"]), max(p["lat"])))
+    assign = []
+    for r in routes:
+        lons, lats = r["lon"], r["lat"]
+        step = max(1, len(lons) // sample)
+        hit = set()
+        for lon, lat in zip(lons[::step], lats[::step]):
+            for name, ring, minx, maxx, miny, maxy in polys:
+                if minx <= lon <= maxx and miny <= lat <= maxy \
+                        and _point_in_ring(lon, lat, ring):
+                    hit.add(name)
+        assign.append(hit)
+    return assign
+
+
 def center(polygons, routes):
     lons, lats = [], []
     for g in polygons + routes:
