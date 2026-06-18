@@ -41,9 +41,11 @@ st.divider()
 # --- Re-run pipeline ---------------------------------------------------------
 st.subheader("Re-run pipeline")
 st.caption(f"Source ZIP: `{ZIP_PATH}`")
-st.write("Clears all loaded data and `pipeline_log`, then re-extracts and "
-         "reloads every file.")
-if st.button("🔄 Re-run pipeline (clear & reload)", type="primary"):
+if not os.path.exists(ZIP_PATH):
+    st.info("Source ZIP not available in this environment — the data is "
+            "served from the bundled `scpd.duckdb`. Re-run the pipeline locally "
+            "with the ZIP to refresh it.")
+elif st.button("🔄 Re-run pipeline (clear & reload)", type="primary"):
     reset_pipeline(con)
     box = st.status("Re-running pipeline…", expanded=True)
     bars = {}

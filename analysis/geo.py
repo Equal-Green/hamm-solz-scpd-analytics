@@ -10,10 +10,11 @@ import re
 import struct
 import xml.etree.ElementTree as ET
 
-from config import RAW_DIR, ZIP_PATH
+from config import DATA_DIR, ZIP_PATH
 
 KML_NAME = "RUTAS_RECOLECCION"          # substring match in the ZIP
-KML_PATH = os.path.join(RAW_DIR, "rutas.kml")
+# Tracked path (committed for cloud hosts that lack the source ZIP).
+KML_PATH = os.path.join(DATA_DIR, "rutas.kml")
 
 
 def ensure_kml(zip_path=ZIP_PATH, dest=KML_PATH):

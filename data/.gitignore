@@ -1,4 +1,4 @@
-# Generated artifacts — never committed.
-*.duckdb
+# Generated artifacts.
+# scpd.duckdb IS committed (prebuilt) so the app runs on hosts without the ZIP.
 *.duckdb.wal
 raw/

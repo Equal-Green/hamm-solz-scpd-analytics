@@ -3,12 +3,15 @@
 Used by the Data Quality "The archive" tab to orient the reader on what the
 source delivery contains and how each folder feeds the data model.
 """
+import json
 import mmap
 import os
 import struct
 from collections import Counter, defaultdict
 
-from config import ZIP_PATH
+from config import DATA_DIR, ZIP_PATH
+
+INVENTORY_JSON = os.path.join(DATA_DIR, "archive_inventory.json")
 
 
 def scan_archive(zip_path=ZIP_PATH):
@@ -60,3 +63,19 @@ def folder_inventory(zip_path=ZIP_PATH):
         })
     return {"total_files": total, "folders": folders,
             "ext_totals": dict(all_exts.most_common())}
+
+
+def save_inventory(path=INVENTORY_JSON, zip_path=ZIP_PATH):
+    inv = folder_inventory(zip_path)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(inv, f, ensure_ascii=False)
+    return inv
+
+
+def load_inventory(path=INVENTORY_JSON, zip_path=ZIP_PATH):
+    """Prefer the committed JSON (works on hosts without the source ZIP);
+    fall back to a live scan if the ZIP is present and the JSON isn't."""
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    return folder_inventory(zip_path)

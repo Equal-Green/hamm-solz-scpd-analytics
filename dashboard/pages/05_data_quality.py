@@ -15,10 +15,12 @@ from style import inject_css, render_header
 from theme import COLORS, apply_layout
 from analysis import queries as q
 from i18n import t
+from config import ZIP_PATH
 from pipeline.catalog import build_catalog
 from pipeline.tables import load_all_tables, REGISTRY_SCHEMA
-from pipeline.archive import folder_inventory
+from pipeline.archive import load_inventory
 
+_HAS_ZIP = os.path.exists(ZIP_PATH)
 con = get_db()
 inject_css()
 ensure_loaded(con)
@@ -85,7 +87,7 @@ def _folder_num(name):
 
 @st.cache_resource
 def _inventory():
-    return folder_inventory()
+    return load_inventory()
 
 
 tab_arch, tab_quality, tab_catalog, tab_src = st.tabs(
@@ -252,7 +254,10 @@ with tab_quality:
 with tab_catalog:
     st.caption("Data model (sheets, columns) and row counts for every "
                "spreadsheet in the source ZIP.")
-    if q.catalog_count(con) == 0:
+    if q.catalog_count(con) == 0 and not _HAS_ZIP:
+        st.info("Catalog isn't bundled and the source ZIP isn't available in "
+                "this environment.")
+    elif q.catalog_count(con) == 0:
         st.info("Catalog not built yet (~30 s scan of every spreadsheet).")
         if st.button("📇 Build catalog", type="primary"):
             box = st.status("Scanning…", expanded=True)
@@ -287,7 +292,7 @@ with tab_catalog:
                     if srow["columns"] and srow["columns"] != "[]":
                         cs = json.loads(srow["columns"])
                         st.caption(", ".join(cs) if cs else "—")
-        if st.button("🔄 Rebuild catalog"):
+        if _HAS_ZIP and st.button("🔄 Rebuild catalog"):
             box = st.status("Rescanning…", expanded=True)
             build_catalog(con, on_status=lambda m: box.update(label=m))
             box.update(label="Catalog rebuilt.", state="complete")
@@ -302,12 +307,15 @@ with tab_src:
                "`retirados`.")
     con.execute(REGISTRY_SCHEMA)
     n_src = con.execute("SELECT count(*) FROM source_tables").fetchone()[0]
-    cta = "📥 Load all source tables" if n_src == 0 else "🔄 Reload all source tables"
-    if st.button(cta):
-        box = st.status("Loading every tabular sheet…", expanded=True)
-        n = load_all_tables(con, on_status=lambda m: box.update(label=m))
-        box.update(label=f"Loaded {n} source tables.", state="complete")
-        st.rerun()
+    if _HAS_ZIP:
+        cta = "📥 Load all source tables" if n_src == 0 else "🔄 Reload all source tables"
+        if st.button(cta):
+            box = st.status("Loading every tabular sheet…", expanded=True)
+            n = load_all_tables(con, on_status=lambda m: box.update(label=m))
+            box.update(label=f"Loaded {n} source tables.", state="complete")
+            st.rerun()
+    elif n_src == 0:
+        st.info("Source tables aren't bundled and the ZIP isn't available here.")
     if n_src:
         reg = con.execute("""
             SELECT table_name, file_name, sheet_name, n_rows, n_columns

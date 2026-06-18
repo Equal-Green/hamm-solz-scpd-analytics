@@ -68,10 +68,21 @@ h4 {{ font-family: 'Inter', sans-serif !important; color: {IRON} !important;
 
 /* Branded hero header — iron with crimson keyline + EqualGreen mark */
 .scpd-header {{
-    background: {IRON}; border-radius: 16px; padding: 1.4rem 1.6rem;
+    background: {IRON}; border-radius: 16px; padding: 1.2rem 1.6rem 1.4rem;
     margin-bottom: 1.4rem; position: relative; overflow: hidden;
     border: 1.5px solid {IRON}; box-shadow: 5px 5px 0 0 {CRIMSON};
-    display: flex; align-items: center; gap: 1.1rem;
+    display: flex; flex-direction: column; align-items: flex-start;
+}}
+/* HAMM Solz × EqualGreen collaboration lockup (on every page header) */
+.scpd-cobrand {{
+    display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+    padding-bottom: .7rem; margin-bottom: .7rem; width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,.13);
+}}
+.scpd-cobrand .scpd-x {{ color: #8c8c8c; font-size: 1.1rem; font-weight: 300; }}
+.scpd-cobrand .scpd-eg {{
+    font-family: 'Playfair Display', serif; font-weight: 800;
+    color: {CREAM}; font-size: 1.06rem;
 }}
 .scpd-header .scpd-logo {{
     width: 60px; height: 60px; border-radius: 12px; flex: 0 0 auto;
@@ -191,13 +202,23 @@ def inject_css():
     st.markdown(_CSS, unsafe_allow_html=True)
 
 
+def cobrand_lockup(on_dark=True, hamm_h=20, eg_size=30):
+    """The HAMM Solz × EqualGreen collaboration lockup."""
+    return (
+        '<div class="scpd-cobrand">'
+        f'{hamm_wordmark(on_dark=on_dark, height=hamm_h)}'
+        '<span class="scpd-x">×</span>'
+        f'{eg_logo_html(eg_size)}'
+        '<span class="scpd-eg">EqualGreen</span>'
+        '</div>'
+    )
+
+
 def render_header(title, subtitle="", eyebrow="THE HAMM SOLZ × EQUALGREEN"):
-    """Branded hero banner with the EqualGreen mark and FO portal styling."""
-    logo = '<div class="scpd-logo"></div>' if _LOGO_URI else ""
+    """Branded hero with the HAMM × EqualGreen lockup on every page."""
     sub = f'<div class="scpd-sub">{subtitle}</div>' if subtitle else ""
-    eb = f'<div class="scpd-eyebrow">{eyebrow}</div>' if eyebrow else ""
     st.markdown(
-        f'<div class="scpd-header">{logo}'
-        f'<div>{eb}<h1>{title}</h1>{sub}</div></div>',
+        f'<div class="scpd-header">{cobrand_lockup()}'
+        f'<h1>{title}</h1>{sub}</div>',
         unsafe_allow_html=True,
     )
