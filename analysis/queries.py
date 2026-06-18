@@ -328,6 +328,116 @@ def subzona_month_heatmap(con, year=None):
     """, yp).df()
 
 
+# --- forecast / capacity -----------------------------------------------------
+def monthly_tonnage_series(con):
+    return con.execute("""
+        SELECT date_trunc('month', fec_ingreso) AS month,
+               sum(peso_neto)/1000.0 AS tonnes
+        FROM transactions
+        WHERE fec_ingreso IS NOT NULL
+        GROUP BY 1 ORDER BY 1
+    """).df()
+
+
+# --- operational efficiency --------------------------------------------------
+def hour_dow_matrix(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT dayofweek(fec_ingreso) AS dow, hour(fec_ingreso) AS hr,
+               count(*) AS trips
+        FROM transactions WHERE fec_ingreso IS NOT NULL {yc}
+        GROUP BY 1, 2
+    """, yp).df()
+
+
+def payload_by_vehicle(con, year=None, n=12):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT tipo_vehiculo,
+               count(*) AS trips,
+               avg(peso_neto) AS avg_kg,
+               median(peso_neto) AS median_kg,
+               quantile_cont(peso_neto, 0.9) AS p90_kg
+        FROM transactions WHERE tipo_vehiculo IS NOT NULL {yc}
+        GROUP BY 1 ORDER BY trips DESC LIMIT {int(n)}
+    """, yp).df()
+
+
+def underloaded(con, threshold_kg, year=None):
+    yc, yp = _year_clause(year)
+    row = con.execute(f"""
+        SELECT count(*) FILTER (WHERE peso_neto < ?) AS under,
+               count(*) AS total,
+               sum(peso_neto) FILTER (WHERE peso_neto < ?)/1000.0 AS under_t
+        FROM transactions WHERE peso_neto IS NOT NULL {yc}
+    """, [threshold_kg, threshold_kg] + yp).fetchone()
+    return {"under": row[0] or 0, "total": row[1] or 0, "under_tonnes": row[2] or 0.0}
+
+
+def payload_histogram(con, year=None):
+    yc, yp = _year_clause(year)
+    return con.execute(f"""
+        SELECT (peso_neto // 2000) * 2 AS bin_t, count(*) AS trips
+        FROM transactions WHERE peso_neto IS NOT NULL AND peso_neto > 0 {yc}
+        GROUP BY 1 ORDER BY 1
+    """, yp).df()
+
+
+# --- revenue assurance / integrity ------------------------------------------
+def especial_growth_by_empresa(con):
+    return con.execute("""
+        WITH e AS (
+            SELECT empresa, source_year, count(*) AS trips
+            FROM transactions
+            WHERE upper(tipo_servicio) LIKE 'SERVICIOS ESPECIAL%'
+            GROUP BY 1, 2
+        )
+        SELECT empresa,
+               sum(trips) FILTER (WHERE source_year = 2023) AS y2023,
+               sum(trips) FILTER (WHERE source_year = 2024) AS y2024,
+               sum(trips) FILTER (WHERE source_year = 2024)
+                 - sum(trips) FILTER (WHERE source_year = 2023) AS delta
+        FROM e GROUP BY 1
+        ORDER BY delta DESC NULLS LAST LIMIT 12
+    """).df()
+
+
+def duplicate_weighings(con):
+    """Same plate, same calendar day, identical net weight — likely a
+    double-weigh / re-print rather than two real trips."""
+    row = con.execute("""
+        SELECT count(*) FROM (
+            SELECT placa, fec_ingreso::DATE AS d, peso_neto, count(*) c
+            FROM transactions
+            WHERE placa IS NOT NULL AND peso_neto IS NOT NULL
+            GROUP BY 1, 2, 3 HAVING count(*) > 1
+        )
+    """).fetchone()[0]
+    sample = con.execute("""
+        SELECT placa, fec_ingreso::DATE AS dia, peso_neto, count(*) AS repeats
+        FROM transactions
+        WHERE placa IS NOT NULL AND peso_neto IS NOT NULL
+        GROUP BY 1, 2, 3 HAVING count(*) > 1
+        ORDER BY repeats DESC LIMIT 15
+    """).df()
+    return {"groups": row, "sample": sample}
+
+
+def integrity_flags(con):
+    row = con.execute("""
+        SELECT
+          count(*) AS total,
+          count(*) FILTER (WHERE peso_salida > peso_ingreso) AS tare_gt_gross,
+          count(*) FILTER (WHERE peso_neto > 45000) AS payload_outlier,
+          count(*) FILTER (WHERE peso_neto = 0) AS zero_net,
+          count(*) FILTER (WHERE peso_ingreso IS NULL OR peso_salida IS NULL) AS missing_weight
+        FROM transactions
+    """).fetchone()
+    return dict(zip(
+        ["total", "tare_gt_gross", "payload_outlier", "zero_net", "missing_weight"],
+        row))
+
+
 # --- data catalog (full INFORMACIÓN folder) ---------------------------------
 def catalog_count(con):
     return con.execute("SELECT count(*) FROM data_catalog").fetchone()[0]

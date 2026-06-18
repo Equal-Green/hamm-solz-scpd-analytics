@@ -11,6 +11,7 @@ import streamlit as st
 from db import get_db
 from state import ensure_loaded
 from style import inject_css, render_header
+from i18n import t
 from theme import COLORS, SEQUENCE, apply_layout
 from analysis import queries as q
 from analysis import geo as geomod
@@ -19,8 +20,7 @@ con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(
-    "Geo & Routes",
+render_header(t("page.geo"),
     "Where waste comes from — collection zones, sub-zones and micro-routes.",
     eyebrow="EQUALGREEN × FLAMING OWL",
 )

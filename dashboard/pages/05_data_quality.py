@@ -10,12 +10,13 @@ from db import get_db
 from state import ensure_loaded
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header("Data Quality", "Row counts, null rates, and integrity flags.")
+render_header(t("page.quality"), "Row counts, null rates, and integrity flags.")
 
 rep = q.quality_report(con)
 
@@ -34,34 +35,34 @@ st.caption(
 )
 
 st.divider()
-t = rep["transactions"]
+tx = rep["transactions"]
 st.subheader("Transactions — key-column health")
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total rows", f"{t['total']:,}")
-c2.metric("Zero net weight", f"{t['zero_net']:,}",
+c1.metric("Total rows", f"{tx['total']:,}")
+c2.metric("Zero net weight", f"{tx['zero_net']:,}",
           help="PESO_NETO = 0 — flagged")
-c3.metric("Negative net weight", f"{t['neg_net']:,}",
+c3.metric("Negative net weight", f"{tx['neg_net']:,}",
           help="PESO_NETO < 0 — flagged")
-c4.metric("Duplicate ticket/year", f"{t['dup_ticket_year']:,}")
+c4.metric("Duplicate ticket/year", f"{tx['dup_ticket_year']:,}")
 
-if t["zero_net"]:
-    st.warning(f"{t['zero_net']:,} trips have zero net weight "
-               f"({t['zero_net']/t['total']*100:.2f}%).")
-if t["neg_net"]:
-    st.warning(f"{t['neg_net']:,} trips have negative net weight "
-               f"({t['neg_net']/t['total']*100:.2f}%).")
-if not t["zero_net"] and not t["neg_net"]:
+if tx["zero_net"]:
+    st.warning(f"{tx['zero_net']:,} trips have zero net weight "
+               f"({tx['zero_net']/tx['total']*100:.2f}%).")
+if tx["neg_net"]:
+    st.warning(f"{tx['neg_net']:,} trips have negative net weight "
+               f"({tx['neg_net']/tx['total']*100:.2f}%).")
+if not tx["zero_net"] and not tx["neg_net"]:
     st.success("No zero or negative net-weight trips.")
 
 st.subheader("Null rates on key columns (transactions)")
 nulls = {
-    "num_ticket": t["null_ticket"], "tipo_servicio": t["null_servicio"],
-    "empresa": t["null_empresa"], "sector": t["null_sector"],
-    "fec_ingreso": t["null_fecha"], "peso_neto": t["null_neto"],
+    "num_ticket": tx["null_ticket"], "tipo_servicio": tx["null_servicio"],
+    "empresa": tx["null_empresa"], "sector": tx["null_sector"],
+    "fec_ingreso": tx["null_fecha"], "peso_neto": tx["null_neto"],
 }
 cols = st.columns(len(nulls))
 for (name, n), col in zip(nulls.items(), cols):
-    pct = n / t["total"] * 100 if t["total"] else 0
+    pct = n / tx["total"] * 100 if tx["total"] else 0
     col.metric(name, f"{n:,}", f"{pct:.2f}%")
 
 st.divider()
@@ -76,6 +77,24 @@ c1.metric("Total rows", f"{r['total']:,}")
 c2.metric("Non-positive net", f"{r['nonpos_net']:,}",
           help="net recovered <= 0")
 c3.metric("Null date / org", f"{r['null_fecha']:,} / {r['null_org']:,}")
+
+st.divider()
+with st.expander("🛠️ Data improvement opportunities (for the next data pull)"):
+    st.markdown(
+        "- **`MICRO_RUTA` is ~52% empty** — route-level analysis only covers "
+        "half the trips. Ask the source to populate micro-route on every ticket.\n"
+        "- **`SECTOR` is effectively constant** (mostly one value) — unusable as "
+        "a geography; rely on `ZONA` / `SUB_ZONA`, or request a real sector field.\n"
+        "- **No coordinates on transactions or Catastro** — mapping comes from "
+        "the routes KML. A parcel/sector **shapefile with geometry** (or lat/long "
+        "per ticket) would enable point-level analysis.\n"
+        "- **Characterization isn't a clean per-tonne table** — a tidy "
+        "composition % by year/stratum would replace the assumptions on the "
+        "Composition & Diversion page.\n"
+        "- **Landfill capacity isn't stated** — a remaining-capacity / airspace "
+        "figure would make the forecast authoritative rather than assumption-driven.\n"
+        "- **Tare-vs-gross & duplicate weighings** (see Revenue & Integrity) — "
+        "worth a source-side validation rule at the weighbridge.")
 
 # --- Full source-data catalog (entire INFORMACIÓN folder) --------------------
 st.divider()

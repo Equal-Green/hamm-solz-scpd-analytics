@@ -20,6 +20,7 @@ import streamlit as st
 from db import get_db          # noqa: E402  (db.py fixes sys.path)
 from state import is_loaded, loaded_files
 from style import inject_css, render_header, LOGO_FULL
+from i18n import t, language_selector
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
 from pipeline.load import run_pipeline
@@ -95,22 +96,28 @@ with st.sidebar:
         '<div class="scpd-brand-sub">SCPD · Guayaquil</div></div>',
         unsafe_allow_html=True,
     )
+language_selector()
 
-home = st.Page("pages/00_home.py", title="Executive Summary", icon="🏠", default=True)
-overview = st.Page("pages/01_overview.py", title="Overview", icon="📈")
-services = st.Page("pages/02_service_types.py", title="Service Types", icon="🧾")
-operators = st.Page("pages/03_operators.py", title="Operators & Fleet", icon="🚛")
-geocycle = st.Page("pages/04_geocycle.py", title="GEOCYCLE Recovery", icon="♻️")
-geo = st.Page("pages/08_geo_routes.py", title="Geo & Routes", icon="🗺️")
-ask = st.Page("pages/07_ask.py", title="Ask the Data", icon="💬")
-quality = st.Page("pages/05_data_quality.py", title="Data Quality & Catalog", icon="🔎")
-settings = st.Page("pages/06_settings.py", title="Settings", icon="⚙️")
+home = st.Page("pages/00_home.py", title=t("page.exec"), icon="🏠", default=True)
+overview = st.Page("pages/01_overview.py", title=t("page.overview"), icon="📈")
+services = st.Page("pages/02_service_types.py", title=t("page.services"), icon="🧾")
+operators = st.Page("pages/03_operators.py", title=t("page.operators"), icon="🚛")
+geocycle = st.Page("pages/04_geocycle.py", title=t("page.geocycle"), icon="♻️")
+geo = st.Page("pages/08_geo_routes.py", title=t("page.geo"), icon="🗺️")
+forecast = st.Page("pages/09_forecast.py", title=t("page.forecast"), icon="📉")
+efficiency = st.Page("pages/10_efficiency.py", title=t("page.efficiency"), icon="⚙️")
+integrity = st.Page("pages/11_integrity.py", title=t("page.integrity"), icon="🔐")
+diversion = st.Page("pages/12_diversion.py", title=t("page.diversion"), icon="🔄")
+ask = st.Page("pages/07_ask.py", title=t("page.ask"), icon="💬")
+quality = st.Page("pages/05_data_quality.py", title=t("page.quality"), icon="🔎")
+settings = st.Page("pages/06_settings.py", title=t("page.settings"), icon="⚙️")
 
 nav = st.navigation({
-    "Start here": [home],
-    "The story": [overview, services, operators, geocycle, geo],
-    "Explore": [ask],
-    "Trust & data": [quality],
-    "System": [settings],
+    t("nav.start"): [home],
+    t("nav.story"): [overview, services, operators, geocycle, geo],
+    t("nav.analysis"): [forecast, efficiency, integrity, diversion],
+    t("nav.explore"): [ask],
+    t("nav.trust"): [quality],
+    t("nav.system"): [settings],
 })
 nav.run()

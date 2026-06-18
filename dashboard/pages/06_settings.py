@@ -11,6 +11,7 @@ for _p in (_here, os.path.dirname(_here), os.path.dirname(os.path.dirname(_here)
 from db import get_db
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 from config import DUCKDB_PATH, ZIP_PATH
 from pipeline.load import run_pipeline, reset_pipeline
 from pipeline.export import pg_export, CLOUD_EXPORT_ENABLED
@@ -18,7 +19,7 @@ from pipeline.export import pg_export, CLOUD_EXPORT_ENABLED
 con = get_db()
 inject_css()
 
-render_header("Settings", "Pipeline status, reloads, and cloud export.")
+render_header(t("page.settings"), "Pipeline status, reloads, and cloud export.")
 
 # --- Pipeline status ---------------------------------------------------------
 st.subheader("Pipeline status")

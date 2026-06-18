@@ -12,12 +12,13 @@ from state import ensure_loaded
 from theme import SERVICE_COLORS, SEQUENCE, COLORS, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header("Service Types", "Trips and tonnage by waste service category.")
+render_header(t("page.services"), "Trips and tonnage by waste service category.")
 
 # Anomaly callout
 an = q.servicios_especial_anomaly(con)

@@ -9,14 +9,14 @@ import streamlit as st
 from db import get_db
 from state import ensure_loaded
 from style import inject_css, render_header
+from i18n import t
 import ask_engine as ae
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(
-    "Ask the Data",
+render_header(t("page.ask"),
     "Put questions to the SCPD dataset — pick a suggestion or type your own.",
     eyebrow="SCPD ANALYTICS · EXPLORE",
 )

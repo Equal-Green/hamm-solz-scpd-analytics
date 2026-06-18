@@ -47,6 +47,9 @@ html, body, [class*="css"], .stApp, [data-testid="stMarkdownContainer"] {{
 }}
 .stApp {{ background: #FFFFFF; }}
 
+/* Hide the Streamlit Deploy button (deployment handled externally) */
+[data-testid="stAppDeployButton"], .stAppDeployButton {{ display: none !important; }}
+
 [data-testid="stMainBlockContainer"] {{
     padding-top: 2.2rem; padding-bottom: 3rem; max-width: 1180px;
 }}

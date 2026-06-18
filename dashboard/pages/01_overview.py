@@ -13,12 +13,13 @@ from state import ensure_loaded
 from theme import YEAR_COLORS, SERVICE_COLORS, SEQUENCE, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header("Overview", "Volume and tonnage trends across 2023–2025.")
+render_header(t("page.overview"), "Volume and tonnage trends across 2023–2025.")
 
 k = q.kpis(con)
 c1, c2, c3, c4 = st.columns(4)

@@ -12,12 +12,13 @@ from state import ensure_loaded
 from theme import SEQUENCE, COLORS, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header("Operators & Fleet", "Companies and vehicle classes delivering to the landfill.")
+render_header(t("page.operators"), "Companies and vehicle classes delivering to the landfill.")
 
 c1, c2 = st.columns(2)
 with c1:

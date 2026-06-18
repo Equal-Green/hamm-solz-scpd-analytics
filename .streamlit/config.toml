@@ -14,3 +14,7 @@ font = "sans-serif"
 
 [server]
 headless = true
+
+[client]
+# Hide the dev toolbar / Deploy button — this is a client-facing report.
+toolbarMode = "minimal"

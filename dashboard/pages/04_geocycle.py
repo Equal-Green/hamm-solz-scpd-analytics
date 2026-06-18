@@ -13,12 +13,13 @@ from state import ensure_loaded
 from theme import COLORS, apply_layout
 from analysis import queries as q
 from style import inject_css, render_header
+from i18n import t
 
 con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header("GEOCYCLE Recovery", "Material recovery — inverted weigh logic.", eyebrow="SCPD ANALYTICS · RECOVERY")
+render_header(t("page.geocycle"), "Material recovery — inverted weigh logic.", eyebrow="SCPD ANALYTICS · RECOVERY")
 st.info(
     "**Inverted weight logic.** GEOCYCLE trucks arrive **empty** and leave "
     "**loaded** with recovered material, so `PESO_SALIDA > PESO_INGRESO` is "
