@@ -22,7 +22,7 @@ inject_css()
 render_header(t("page.settings"), "Pipeline status, reloads, and cloud export.")
 
 # --- Pipeline status ---------------------------------------------------------
-st.subheader("Pipeline status")
+st.subheader(t("Pipeline status"))
 status = q.pipeline_status(con)
 if status.empty:
     st.warning("No files loaded yet. Run the pipeline from the Home page.")
@@ -39,7 +39,7 @@ c3.metric("DuckDB file size", f"{size:,.1f} MB")
 st.divider()
 
 # --- Re-run pipeline ---------------------------------------------------------
-st.subheader("Re-run pipeline")
+st.subheader(t("Re-run pipeline"))
 st.caption(f"Source ZIP: `{ZIP_PATH}`")
 if not os.path.exists(ZIP_PATH):
     st.info("Source ZIP not available in this environment — the data is "
@@ -69,7 +69,7 @@ elif st.button("🔄 Re-run pipeline (clear & reload)", type="primary"):
 st.divider()
 
 # --- Export to Postgres (Phase 2, gated) -------------------------------------
-st.subheader("Export to Postgres / Supabase")
+st.subheader(t("Export to Postgres / Supabase"))
 st.caption("Phase 2 — build the connection here; export is gated until enabled.")
 status_txt = "🟢 enabled" if CLOUD_EXPORT_ENABLED else "🔒 gated (coming soon)"
 st.markdown(f"**Cloud export:** {status_txt}")

@@ -17,7 +17,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.ask"),
-    "Put questions to the SCPD dataset — pick a suggestion or type your own.",
+    t("Put questions to the SCPD dataset — pick a suggestion or type your own."),
     eyebrow="SCPD ANALYTICS · EXPLORE",
 )
 

@@ -18,7 +18,7 @@ con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(t("page.operators"), "Companies and vehicle classes delivering to the landfill.")
+render_header(t("page.operators"), t("Companies and vehicle classes delivering to the landfill."))
 
 c1, c2 = st.columns(2)
 with c1:
@@ -35,13 +35,13 @@ with col_a:
     fig = px.bar(top.sort_values("trips"), x="trips", y="empresa",
                  orientation="h", color_discrete_sequence=[COLORS["primary"]],
                  text_auto=".2s")
-    st.plotly_chart(apply_layout(fig, "Top 10 companies by trips", height=420),
+    st.plotly_chart(apply_layout(fig, t("Top 10 companies by trips"), height=420),
                     use_container_width=True)
 with col_b:
     fig2 = px.bar(top.sort_values("tonnes"), x="tonnes", y="empresa",
                   orientation="h", color_discrete_sequence=[COLORS["secondary"]],
                   text_auto=".2s")
-    st.plotly_chart(apply_layout(fig2, "Top 10 companies by net tonnage", height=420),
+    st.plotly_chart(apply_layout(fig2, t("Top 10 companies by net tonnage"), height=420),
                     use_container_width=True)
 
 st.divider()
@@ -57,10 +57,10 @@ with col_c:
     fig3 = px.pie(vd, names="tipo_vehiculo", values="trips", hole=0.45,
                   color_discrete_sequence=SEQUENCE)
     fig3.update_traces(textposition="inside", textinfo="percent")
-    st.plotly_chart(apply_layout(fig3, "Vehicle class distribution"),
+    st.plotly_chart(apply_layout(fig3, t("Vehicle class distribution")),
                     use_container_width=True)
 with col_d:
-    st.subheader("Avg net weight per trip by company")
+    st.subheader(t("Avg net weight per trip by company"))
     show = top[["empresa", "trips", "tonnes", "avg_kg"]].copy()
     show["avg_kg"] = show["avg_kg"].round(0)
     show["tonnes"] = show["tonnes"].round(1)

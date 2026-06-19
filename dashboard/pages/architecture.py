@@ -11,7 +11,7 @@ from i18n import t
 
 inject_css()
 render_header(t("page.arch"),
-              "The technology behind your deliverable — DuckDB + Streamlit.")
+              t("The technology behind your deliverable — DuckDB + Streamlit."))
 
 st.markdown(
     "Your report isn't a static PDF or a spreadsheet — it's a small, "
@@ -39,7 +39,7 @@ with c2:
             "front-end engineering, no separate web server to manage.")
 
 st.divider()
-st.subheader("How the data flows")
+st.subheader(t("How the data flows"))
 st.markdown(
     "```\n"
     "  ┌─────────────────┐   extract &     ┌──────────────┐   SQL queries   ┌────────────┐\n"
@@ -62,7 +62,7 @@ st.markdown(
     "zone in 2024\") and Streamlit renders the answer as a chart, table or map.")
 
 st.divider()
-st.subheader("Why this approach")
+st.subheader(t("Why this approach"))
 a, b, c = st.columns(3)
 a.markdown("**Portable**  \nThe whole report is a folder. Clone it, point it at "
            "the data, run one command. No servers to provision.")
@@ -72,7 +72,7 @@ c.markdown("**Reproducible**  \nThe pipeline is code. Re-run it on next year's "
            "data and the same report rebuilds itself.")
 
 st.divider()
-st.subheader("What it took to get here")
+st.subheader(t("What it took to get here"))
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Source size", "6 GB ZIP")
 m2.metric("Rows loaded", "~524,000")
@@ -86,7 +86,7 @@ st.caption(
     "report stays simple and instant.")
 
 st.divider()
-st.subheader("Path to the cloud (optional, Phase 2)")
+st.subheader(t("Path to the cloud (optional, Phase 2)"))
 st.markdown(
     "Everything above runs **locally and offline**. When you want it hosted, "
     "the same app deploys to a small container (e.g. Google Cloud Run or "

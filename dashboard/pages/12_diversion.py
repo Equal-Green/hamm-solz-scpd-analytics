@@ -20,7 +20,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.diversion"),
-              "How much of what we bury could be diverted instead.",
+              t("How much of what we bury could be diverted instead."),
               eyebrow=t("eyebrow.brand"))
 
 k = q.kpis(con)
@@ -35,7 +35,7 @@ c2.metric(t("kpi.geocycle_recovered"), f"{recovered:,.0f} t")
 c3.metric(t("kpi.current_diversion"), f"{cur_div:.2f}%")
 
 st.divider()
-st.subheader("Composition & diversion scenario")
+st.subheader(t("Composition & diversion scenario"))
 st.caption(
     "The source caracterización studies aren't a clean per-tonne table, so set "
     "the composition below (defaults reflect typical Ecuadorian municipal solid "
@@ -59,7 +59,7 @@ new_rate = (recovered + achievable_t) / landfilled * 100 if landfilled else 0
 
 col_a, col_b = st.columns([1, 1])
 with col_a:
-    st.plotly_chart(apply_layout(fig, "Assumed waste composition"),
+    st.plotly_chart(apply_layout(fig, t("Assumed waste composition")),
                     use_container_width=True)
 with col_b:
     fig2 = go.Figure(go.Bar(
@@ -68,7 +68,7 @@ with col_b:
         marker_color=[COLORS["secondary"], COLORS["success"], COLORS["amber"]],
         text=[f"{v:,.0f} t" for v in [divertible_t, achievable_t, recovered]],
         textposition="outside"))
-    st.plotly_chart(apply_layout(fig2, "Diversion potential (3-yr total)"),
+    st.plotly_chart(apply_layout(fig2, t("Diversion potential (3-yr total)")),
                     use_container_width=True)
 
 st.success(

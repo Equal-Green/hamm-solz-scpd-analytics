@@ -26,7 +26,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.quality"),
-              "Orient on the source archive, then verify the data it produced.")
+              t("Orient on the source archive, then verify the data it produced."))
 
 # Curated narrative per top-level folder (keyed by its leading number),
 # merged with live file counts from the ZIP.
@@ -178,7 +178,7 @@ with tab_arch:
                                          "Document / drawing": COLORS["slate"]},
                      text_auto=True)
         fig.update_layout(yaxis=dict(autorange="reversed"))
-        st.plotly_chart(apply_layout(fig, "Files by type", height=520),
+        st.plotly_chart(apply_layout(fig, t("Files by type"), height=520),
                         use_container_width=True)
         st.caption(
             "Most of the archive is **documents & CAD/GIS** (PDF, DWG, SHP) — "
@@ -190,7 +190,7 @@ with tab_arch:
 # ======================================================================
 with tab_quality:
     rep = q.quality_report(con)
-    st.subheader("Row counts: loaded vs. brief")
+    st.subheader(t("Row counts: loaded vs. brief"))
     for f in rep["files"]:
         delta = f["loaded"] - f["spec_rows"]
         flag = "✅" if delta == 0 else f"⚠️ {delta:+d}"
@@ -202,7 +202,7 @@ with tab_quality:
 
     st.divider()
     tx = rep["transactions"]
-    st.subheader("Transactions — key-column health")
+    st.subheader(t("Transactions — key-column health"))
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Total rows", f"{tx['total']:,}")
     c2.metric("Zero net weight", f"{tx['zero_net']:,}", help="PESO_NETO = 0")
@@ -211,7 +211,7 @@ with tab_quality:
     if not tx["zero_net"] and not tx["neg_net"]:
         st.success("No zero or negative net-weight trips.")
 
-    st.subheader("Null rates on key columns (transactions)")
+    st.subheader(t("Null rates on key columns (transactions)"))
     nulls = {"num_ticket": tx["null_ticket"], "tipo_servicio": tx["null_servicio"],
              "empresa": tx["null_empresa"], "sector": tx["null_sector"],
              "fec_ingreso": tx["null_fecha"], "peso_neto": tx["null_neto"]}
@@ -221,11 +221,11 @@ with tab_quality:
         col.metric(name, f"{n:,}", f"{pct:.2f}%")
 
     st.divider()
-    st.subheader("Date range per year")
+    st.subheader(t("Date range per year"))
     st.dataframe(rep["date_range_by_year"], use_container_width=True, hide_index=True)
 
     r = rep["retirados"]
-    st.subheader("GEOCYCLE (retirados)")
+    st.subheader(t("GEOCYCLE (retirados)"))
     c1, c2, c3 = st.columns(3)
     c1.metric("Total rows", f"{r['total']:,}")
     c2.metric("Non-positive net", f"{r['nonpos_net']:,}", help="net recovered <= 0")

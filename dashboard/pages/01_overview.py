@@ -19,7 +19,7 @@ con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(t("page.overview"), "Volume and tonnage trends across 2023–2025.")
+render_header(t("page.overview"), t("Volume and tonnage trends across 2023–2025."))
 
 k = q.kpis(con)
 c1, c2, c3, c4 = st.columns(4)
@@ -42,7 +42,7 @@ for year in sorted(mt["source_year"].unique()):
 fig.update_xaxes(tickmode="array", tickvals=list(range(1, 13)),
                  ticktext=["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])
-st.plotly_chart(apply_layout(fig, "Monthly trip volume (years overlaid)"),
+st.plotly_chart(apply_layout(fig, t("Monthly trip volume (years overlaid)")),
                 use_container_width=True)
 
 col_a, col_b = st.columns(2)
@@ -55,7 +55,7 @@ with col_a:
                   text_auto=".2s")
     fig2.update_layout(showlegend=False)
     fig2.update_xaxes(type="category", title_text="")
-    st.plotly_chart(apply_layout(fig2, "Total annual net tonnage"),
+    st.plotly_chart(apply_layout(fig2, t("Total annual net tonnage")),
                     use_container_width=True)
 
 with col_b:
@@ -67,5 +67,5 @@ with col_b:
                       ticktext=["J", "F", "M", "A", "M", "J",
                                 "J", "A", "S", "O", "N", "D"])
     fig3.update_layout(barmode="stack", legend_title_text="")
-    st.plotly_chart(apply_layout(fig3, "Monthly tonnage by service type"),
+    st.plotly_chart(apply_layout(fig3, t("Monthly tonnage by service type")),
                     use_container_width=True)

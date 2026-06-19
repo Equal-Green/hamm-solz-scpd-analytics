@@ -117,6 +117,30 @@ h4 {{ font-family: 'Inter', sans-serif !important; color: {IRON} !important;
 /* Dark iron sidebar (FO portal signature) */
 [data-testid="stSidebar"] {{ background: {IRON}; border-right: 1px solid #000; }}
 [data-testid="stSidebar"] * {{ color: {CREAM}; }}
+
+/* Order: collapse header, then logos + language toggle, then the nav */
+[data-testid="stSidebarContent"] {{ display: flex; flex-direction: column; }}
+[data-testid="stSidebarHeader"] {{ order: 0; padding-bottom: 0; }}
+[data-testid="stSidebarUserContent"] {{ order: 1; padding-top: .2rem; }}
+[data-testid="stSidebarNav"] {{ order: 2; margin-top: .5rem; }}
+
+/* Co-branded sidebar logo lockup (HAMM Solz × EqualGreen) */
+.scpd-side-logos {{
+    display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+    padding: .1rem 0 .7rem; margin-bottom: .2rem;
+    border-bottom: 1px solid rgba(255,255,255,.13);
+}}
+.scpd-side-logos .scpd-x {{ color: #8c8c8c; font-weight: 300; }}
+.scpd-side-logos .scpd-eg {{
+    font-family: 'Playfair Display', serif; font-weight: 800;
+    color: {CREAM}; font-size: .98rem;
+}}
+/* Fix white-on-white language select: dark text on its light field */
+[data-testid="stSidebar"] [data-baseweb="select"] > div {{
+    background: #FFFFFF !important; border-radius: 10px;
+}}
+[data-testid="stSidebar"] [data-baseweb="select"] div {{ color: {IRON} !important; }}
+[data-testid="stSidebar"] [data-baseweb="select"] svg {{ fill: {IRON} !important; }}
 [data-testid="stSidebarNav"] a {{ border-radius: 8px; color: #CFCCC5 !important; }}
 [data-testid="stSidebarNav"] a:hover {{ background: rgba(255,255,255,.06); }}
 [data-testid="stSidebarNav"] a[aria-current="page"] {{
@@ -164,13 +188,19 @@ hr {{ border-color: {BORDER}; }}
 """
 
 
-def hamm_wordmark(on_dark=False, height=34):
+def hamm_wordmark(on_dark=False, height=34, tagline=True):
     """Recreated THE HAMM Solz wordmark (client / customer brand)."""
     the = "#2BB3F0" if on_dark else "#1B9FE0"
     hamm = "#FFFFFF" if on_dark else "#1A1A1A"
     solz = "#C7C4BD" if on_dark else "#5A5A5A"
     tag = "#A6A6A6" if on_dark else "#3A3A3A"
     ico = int(height * 0.62)
+    tagline_html = (
+        f'<div style="color:{tag};font-family:Arial,sans-serif;'
+        f'font-weight:700;font-size:{max(9, int(height*0.32))}px;'
+        f'letter-spacing:.005em;margin-top:.3em;">'
+        f'Total Energy &amp; Environment Consultant</div>'
+    ) if tagline else ""
     return (
         f'<div style="display:inline-flex;flex-direction:column;line-height:1;">'
         f'<div style="display:flex;align-items:center;gap:.16em;'
@@ -184,10 +214,7 @@ def hamm_wordmark(on_dark=False, height=34):
         f'<span style="color:{hamm};">HAMM</span>'
         f'<span style="color:{solz};font-weight:700;font-size:.72em;'
         f'align-self:flex-end;padding-bottom:.1em;margin-left:.1em;">Solz</span>'
-        f'</div><div style="color:{tag};font-family:Arial,sans-serif;'
-        f'font-weight:700;font-size:{max(9, int(height*0.32))}px;'
-        f'letter-spacing:.005em;margin-top:.3em;">'
-        f'Total Energy &amp; Environment Consultant</div></div>'
+        f'</div>{tagline_html}</div>'
     )
 
 

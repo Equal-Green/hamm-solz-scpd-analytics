@@ -17,9 +17,9 @@ inject_css()
 ensure_loaded(con)
 
 render_header(
-    "Guayaquil's Waste, in Three Years",
-    "Every truckload weighed at the Las Iguanas landfill — Consorcio URVASEO, "
-    "under CIRCULAREP — from 2023 to 2025.",
+    t("Guayaquil's Waste, in Three Years"),
+    t("Every truckload weighed at the Las Iguanas landfill — Consorcio URVASEO, "
+      "under CIRCULAREP — from 2023 to 2025."),
 )
 
 # --- headline numbers --------------------------------------------------------
@@ -62,7 +62,7 @@ c3.metric(t("kpi.avg_per_trip"), f"{k['avg_kg']:,.0f} kg")
 c4.metric(t("kpi.period"), f"{first_y}–{last_y}")
 
 st.divider()
-st.subheader("Key findings")
+st.subheader(t("Key findings"))
 
 f1, f2 = st.columns(2)
 with f1:
@@ -101,7 +101,7 @@ if clean:
     )
 
 st.divider()
-st.subheader("How to read this dashboard")
+st.subheader(t("How to read this dashboard"))
 st.markdown(
     "- **The story →** *Overview, Service Types, Operators & Fleet, GEOCYCLE "
     "Recovery* — the narrative, in order.\n"

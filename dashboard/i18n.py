@@ -139,6 +139,14 @@ TR = {
 }
 
 
+try:
+    from i18n_pages import TR_PAGES
+    for _k, _v in TR_PAGES.items():
+        TR.setdefault(_k, {}).update(_v)
+except ImportError:
+    pass
+
+
 def current_lang():
     return st.session_state.get("lang", _DEFAULT)
 

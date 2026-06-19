@@ -18,7 +18,7 @@ con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(t("page.services"), "Trips and tonnage by waste service category.")
+render_header(t("page.services"), t("Trips and tonnage by waste service category."))
 
 # Anomaly callout
 an = q.servicios_especial_anomaly(con)
@@ -42,18 +42,18 @@ with col_a:
                  color="tipo_servicio", color_discrete_map=SERVICE_COLORS,
                  color_discrete_sequence=SEQUENCE, text_auto=".2s")
     fig.update_layout(showlegend=False, yaxis=dict(autorange="reversed"))
-    st.plotly_chart(apply_layout(fig, "Trips by service type"),
+    st.plotly_chart(apply_layout(fig, t("Trips by service type")),
                     use_container_width=True)
 with col_b:
     fig2 = px.bar(ss, x="tonnes", y="tipo_servicio", orientation="h",
                   color="tipo_servicio", color_discrete_map=SERVICE_COLORS,
                   color_discrete_sequence=SEQUENCE, text_auto=".2s")
     fig2.update_layout(showlegend=False, yaxis=dict(autorange="reversed"))
-    st.plotly_chart(apply_layout(fig2, "Net tonnage by service type"),
+    st.plotly_chart(apply_layout(fig2, t("Net tonnage by service type")),
                     use_container_width=True)
 
 st.divider()
-st.subheader("Year-over-year trips by service")
+st.subheader(t("Year-over-year trips by service"))
 yoy = q.service_yoy(con)
 st.dataframe(yoy, use_container_width=True, hide_index=True)
 st.caption("`A->B %` columns show the year-over-year change in trip count.")

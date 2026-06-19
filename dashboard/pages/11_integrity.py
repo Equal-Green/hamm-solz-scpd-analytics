@@ -19,8 +19,8 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.integrity"),
-              "Where the SERVICIOS ESPECIAL spike came from, and weighbridge "
-              "integrity flags.", eyebrow=t("eyebrow.brand"))
+              t("Where the SERVICIOS ESPECIAL spike came from, and weighbridge "
+                "integrity flags."), eyebrow=t("eyebrow.brand"))
 
 an = q.servicios_especial_anomaly(con)
 st.error(
@@ -36,14 +36,14 @@ fig = px.bar(eg.sort_values("delta").tail(10), x="delta", y="empresa",
              color_continuous_scale=["#0E7C86", "#E0A106", "#DC2828"],
              text_auto=True)
 fig.update_layout(coloraxis_showscale=False)
-st.plotly_chart(apply_layout(fig, "SERVICIOS ESPECIAL — trip increase by operator (2023→2024)",
+st.plotly_chart(apply_layout(fig, t("SERVICIOS ESPECIAL — trip increase by operator (2023→2024)"),
                              height=430), use_container_width=True)
 st.dataframe(eg, use_container_width=True, hide_index=True,
              column_config={"empresa": "Operator (RAZON_SOCIAL)",
                             "y2023": "2023", "y2024": "2024", "delta": "Δ trips"})
 
 st.divider()
-st.subheader("Weighbridge integrity flags")
+st.subheader(t("Weighbridge integrity flags"))
 fl = q.integrity_flags(con)
 dup = q.duplicate_weighings(con)
 total = fl["total"] or 1

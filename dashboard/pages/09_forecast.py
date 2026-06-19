@@ -89,7 +89,7 @@ fig.add_trace(go.Scatter(x=hist["month"], y=hist["tonnes"], mode="lines",
 fig.add_trace(go.Scatter(x=proj["month"], y=proj["eff_tonnes"], mode="lines",
                          name="Forecast (after diversion)",
                          line=dict(color=COLORS["primary"], width=2, dash="dot")))
-st.plotly_chart(apply_layout(fig, "Monthly net tonnage — history & forecast"),
+st.plotly_chart(apply_layout(fig, t("Monthly net tonnage — history & forecast")),
                 use_container_width=True)
 
 # --- chart 2: cumulative vs capacity -----------------------------------------
@@ -102,7 +102,7 @@ fig2.add_hline(y=cap_tonnes, line_dash="dash", line_color=COLORS["danger"],
                annotation_position="top left")
 if fill_date is not None:
     fig2.add_vline(x=fill_date, line_dash="dot", line_color=COLORS["danger"])
-st.plotly_chart(apply_layout(fig2, "Cumulative disposal vs. remaining capacity"),
+st.plotly_chart(apply_layout(fig2, t("Cumulative disposal vs. remaining capacity")),
                 use_container_width=True)
 
 st.info(t("fc.assumption"), icon="📉")

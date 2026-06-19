@@ -19,7 +19,7 @@ import streamlit as st
 
 from db import get_db          # noqa: E402  (db.py fixes sys.path)
 from state import is_loaded, loaded_files
-from style import inject_css, render_header, LOGO_FULL
+from style import (inject_css, render_header, hamm_wordmark, eg_logo_html)
 from i18n import t, language_selector
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
@@ -87,13 +87,15 @@ if not is_loaded(con):
     _run_pipeline_ui()
     st.stop()
 
-# EqualGreen logo at the top of the (dark iron) sidebar.
-st.logo(LOGO_FULL, size="large")
-
+# Co-branded logos (HAMM Solz × EqualGreen) at the top of the sidebar,
+# with the language toggle on its own row directly below (both above the nav).
 with st.sidebar:
     st.markdown(
-        '<div class="scpd-brand"><span>EqualGreen</span>'
-        '<div class="scpd-brand-sub">SCPD · Guayaquil</div></div>',
+        '<div class="scpd-side-logos">'
+        f'{hamm_wordmark(on_dark=True, height=16, tagline=False)}'
+        '<span class="scpd-x">×</span>'
+        f'{eg_logo_html(22)}'
+        '<span class="scpd-eg">EqualGreen</span></div>',
         unsafe_allow_html=True,
     )
 language_selector()

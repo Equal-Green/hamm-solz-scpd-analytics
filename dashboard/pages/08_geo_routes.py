@@ -21,7 +21,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.geo"),
-    "Where waste comes from — collection zones, sub-zones and micro-routes.",
+    t("Where waste comes from — collection zones, sub-zones and micro-routes."),
     eyebrow="EQUALGREEN × FLAMING OWL",
 )
 
@@ -57,7 +57,7 @@ def _geometry():
             geomod.polygon_centroids(polys))
 
 
-st.subheader("🗺️ Collection map — sub-zones & routes")
+st.subheader(t("🗺️ Collection map — sub-zones & routes"))
 try:
     polys, routes, gj, ctr, route_subz, centroids = _geometry()
     mapped_subz = sorted(centroids.keys())
@@ -149,7 +149,7 @@ fig = px.treemap(zs, path=[px.Constant("All zones"), "zona", "sub_zona"],
 fig.update_traces(root_color="#F6F4F0")
 fig.update_layout(margin=dict(l=8, r=8, t=40, b=8), height=440,
                   font=dict(family="Inter", color="#141414"))
-fig.update_layout(title=dict(text="Net tonnage by zone → sub-zone",
+fig.update_layout(title=dict(text=t("Net tonnage by zone → sub-zone"),
                              font=dict(family="Playfair Display", size=16)))
 st.plotly_chart(fig, use_container_width=True)
 
@@ -160,17 +160,17 @@ with col_a:
                 color_discrete_sequence=SEQUENCE, text_auto=".2s")
     f2.update_layout(showlegend=False)
     f2.update_xaxes(type="category", title_text="")
-    st.plotly_chart(apply_layout(f2, "Net tonnage by zone"), use_container_width=True)
+    st.plotly_chart(apply_layout(f2, t("Net tonnage by zone")), use_container_width=True)
 with col_b:
     ts = q.top_subzonas(con, yf, n=15)
     f3 = px.bar(ts.sort_values("tonnes"), x="tonnes", y="sub_zona",
                 orientation="h", color="zona", color_discrete_sequence=SEQUENCE,
                 text_auto=".2s")
-    st.plotly_chart(apply_layout(f3, "Top sub-zones by tonnage", height=420),
+    st.plotly_chart(apply_layout(f3, t("Top sub-zones by tonnage"), height=420),
                     use_container_width=True)
 
 st.divider()
-st.subheader("Sub-zone activity by month")
+st.subheader(t("Sub-zone activity by month"))
 hm = q.subzona_month_heatmap(con, yf)
 if not hm.empty:
     pivot = hm.pivot(index="sub_zona", columns="mes", values="tonnes").fillna(0)
@@ -185,7 +185,7 @@ if not hm.empty:
     st.plotly_chart(fig4, use_container_width=True)
 
 st.divider()
-st.subheader("Top micro-routes")
+st.subheader(t("Top micro-routes"))
 mr = q.top_micro_routes(con, yf, n=15)
 show = mr.copy()
 show["tonnes"] = show["tonnes"].round(1)

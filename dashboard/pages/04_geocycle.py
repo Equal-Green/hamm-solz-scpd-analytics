@@ -19,7 +19,7 @@ con = get_db()
 inject_css()
 ensure_loaded(con)
 
-render_header(t("page.geocycle"), "Material recovery — inverted weigh logic.", eyebrow="SCPD ANALYTICS · RECOVERY")
+render_header(t("page.geocycle"), t("Material recovery — inverted weigh logic."), eyebrow="SCPD ANALYTICS · RECOVERY")
 st.info(
     "**Inverted weight logic.** GEOCYCLE trucks arrive **empty** and leave "
     "**loaded** with recovered material, so `PESO_SALIDA > PESO_INGRESO` is "
@@ -40,10 +40,10 @@ st.divider()
 rm = q.retirados_monthly(con)
 fig = px.bar(rm, x="month", y="tonnes",
              color_discrete_sequence=[COLORS["success"]])
-st.plotly_chart(apply_layout(fig, "Monthly recovered tonnage"),
+st.plotly_chart(apply_layout(fig, t("Monthly recovered tonnage")),
                 use_container_width=True)
 
-st.subheader("Recovery vs. landfill volume")
+st.subheader(t("Recovery vs. landfill volume"))
 rv = q.recovery_vs_landfill(con)
 fig2 = go.Figure()
 fig2.add_bar(x=rv["year"], y=rv["landfill_t"], name="Landfilled",
@@ -52,7 +52,7 @@ fig2.add_bar(x=rv["year"], y=rv["recovery_t"], name="Recovered",
              marker_color=COLORS["success"])
 fig2.update_layout(barmode="group")
 fig2.update_xaxes(type="category")
-st.plotly_chart(apply_layout(fig2, "Landfilled vs. recovered tonnage by year"),
+st.plotly_chart(apply_layout(fig2, t("Landfilled vs. recovered tonnage by year")),
                 use_container_width=True)
 
 show = rv.copy()

@@ -19,7 +19,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.efficiency"),
-              "Payload utilization, under-loaded trips, and weighbridge timing.",
+              t("Payload utilization, under-loaded trips, and weighbridge timing."),
               eyebrow=t("eyebrow.brand"))
 
 DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -52,7 +52,7 @@ with col_a:
     fig = px.bar(pv.sort_values("avg_kg"), x="avg_kg", y="tipo_vehiculo",
                  orientation="h", color_discrete_sequence=[COLORS["primary"]],
                  text_auto=".2s")
-    st.plotly_chart(apply_layout(fig, "Avg payload by vehicle class (kg)",
+    st.plotly_chart(apply_layout(fig, t("Avg payload by vehicle class (kg)"),
                                  height=420), use_container_width=True)
 with col_b:
     ph = q.payload_histogram(con, yf)
@@ -61,11 +61,11 @@ with col_b:
     fig2 = px.bar(ph, x="bin_t", y="trips",
                   color_discrete_sequence=[COLORS["secondary"]])
     fig2.update_xaxes(title_text="net payload (tonnes)")
-    st.plotly_chart(apply_layout(fig2, "Payload distribution"),
+    st.plotly_chart(apply_layout(fig2, t("Payload distribution")),
                     use_container_width=True)
 
 st.divider()
-st.subheader("Weighbridge activity — hour × day of week")
+st.subheader(t("Weighbridge activity — hour × day of week"))
 hd = q.hour_dow_matrix(con, yf)
 if not hd.empty:
     pivot = hd.pivot(index="dow", columns="hr", values="trips").fillna(0)
