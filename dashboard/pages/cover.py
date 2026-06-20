@@ -7,6 +7,7 @@ for _p in (_here, os.path.dirname(_here), os.path.dirname(os.path.dirname(_here)
 import streamlit as st
 
 from style import inject_css, hamm_wordmark, eg_logo_html
+from i18n import t
 
 inject_css()
 
@@ -31,7 +32,7 @@ st.markdown(
     <div style="text-align:center;padding:1.2rem 0 0.4rem 0;">
       <div style="font-family:'JetBrains Mono',monospace;color:#DC2828;
                   letter-spacing:.18em;font-weight:700;font-size:.8rem;">
-        MUNICIPAL SOLID WASTE ANALYTICS</div>
+        """ + t("MUNICIPAL SOLID WASTE ANALYTICS") + """</div>
       <h1 style="font-family:'Playfair Display',serif;font-weight:900;
                  color:#141414;font-size:2.8rem;margin:.4rem 0 .2rem 0;
                  letter-spacing:-.02em;line-height:1.08;">
@@ -47,24 +48,21 @@ st.divider()
 
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown("**Prepared for**")
+    st.markdown(f"**{t('Prepared for')}**")
     st.markdown("THE HAMM Solz Co., Ltd.  \n"
                 "_Total Energy & Environment Consultant_  \n"
                 "Gangnam-gu, Seoul, Korea")
 with c2:
-    st.markdown("**Prepared by**")
+    st.markdown(f"**{t('Prepared by')}**")
     st.markdown("EqualGreen × Flaming Owl  \n"
-                "_Data & analytics_")
+                f"_{t('Data & analytics')}_")
 with c3:
-    st.markdown("**Scope**")
-    st.markdown("516,526 weighbridge trips  \n"
-                "5.9M tonnes · 2023–2025  \n"
-                "20 source datasets")
+    st.markdown(f"**{t('Scope')}**")
+    st.markdown(f"{t('516,526 weighbridge trips')}  \n"
+                f"{t('5.9M tonnes · 2023–2025')}  \n"
+                f"{t('20 source datasets')}")
 
 st.divider()
 st.markdown(
     "<div style='text-align:center;color:#8a8a8a;font-size:.85rem;'>"
-    "A self-contained DuckDB + Streamlit analytics application. "
-    "Use the sidebar to navigate — start with the Executive Summary, "
-    "or see <b>How it works</b> for the technology behind this deliverable."
-    "</div>", unsafe_allow_html=True)
+    + t("cover.footer") + "</div>", unsafe_allow_html=True)

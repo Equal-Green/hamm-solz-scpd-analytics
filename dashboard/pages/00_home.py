@@ -43,17 +43,10 @@ lead_company = top["empresa"].iloc[0] if len(top) else "—"
 lead_share = (top["trips"].iloc[0] / k["trips"] * 100) if len(top) else 0
 
 # --- the story ---------------------------------------------------------------
-st.markdown(
-    f"""
-Between **{first_y} and {last_y}**, **{k['trips']:,} truckloads** crossed the
-Las Iguanas weighbridge, delivering **{k['tonnes']:,.0f} tonnes** of municipal
-solid waste — an average of **{k['avg_kg']:,.0f} kg per trip**. Annual tonnage
-{'grew' if growth >= 0 else 'fell'} **{growth:+.0f}%** over the period.
-This dashboard walks through *what* arrived, *who* brought it, *how much* was
-recovered, and *how much you can trust the numbers* — and lets you ask the data
-questions directly.
-"""
-)
+st.markdown(t("home.narrative").format(
+    a=first_y, b=last_y, trips=f"{k['trips']:,}", tonnes=f"{k['tonnes']:,.0f}",
+    avg=f"{k['avg_kg']:,.0f}", dir=t("grew") if growth >= 0 else t("fell"),
+    growth=f"{growth:+.0f}%"))
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric(t("kpi.total_trips"), f"{k['trips']:,}")
@@ -67,48 +60,29 @@ st.subheader(t("Key findings"))
 f1, f2 = st.columns(2)
 with f1:
     with st.container(border=True):
-        st.markdown(f"#### 📈 Volume is {'rising' if growth>=0 else 'falling'}")
-        st.markdown(
-            f"Net tonnage moved from **{t_first:,.0f} t** in {first_y} to "
-            f"**{t_last:,.0f} t** in {last_y} (**{growth:+.0f}%**)."
-        )
+        st.markdown("#### 📈 " + t("Volume is rising" if growth >= 0
+                                   else "Volume is falling"))
+        st.markdown(t("home.card.volume").format(
+            f=f"{t_first:,.0f}", fy=first_y, l=f"{t_last:,.0f}", ly=last_y,
+            g=f"{growth:+.0f}%"))
     with st.container(border=True):
-        st.markdown("#### ♻️ Recovery is small but real")
-        st.markdown(
-            f"GEOCYCLE diverted **{recovered:,.0f} t** for material recovery — "
-            f"about **{recovery_pct:.2f}%** of everything landfilled."
-        )
+        st.markdown("#### ♻️ " + t("Recovery is small but real"))
+        st.markdown(t("home.card.recovery").format(
+            rec=f"{recovered:,.0f}", pct=f"{recovery_pct:.2f}%"))
 with f2:
     with st.container(border=True):
-        st.markdown("#### ⚠️ One service category spiked")
-        st.markdown(
-            f"**SERVICIOS ESPECIAL** trips jumped **{an['pct']:+.0f}%** from "
-            f"{an['y2023']:,} (2023) to {an['y2024']:,} (2024) — the standout "
-            f"anomaly in the data."
-        )
+        st.markdown("#### ⚠️ " + t("One service category spiked"))
+        st.markdown(t("home.card.spike").format(
+            pct=f"{an['pct']:+.0f}%", y23=f"{an['y2023']:,}", y24=f"{an['y2024']:,}"))
     with st.container(border=True):
-        st.markdown("#### 🚛 One operator dominates")
-        st.markdown(
-            f"**{lead_company}** alone accounts for **{lead_share:.0f}%** of all "
-            f"trips — the municipal collection consortium."
-        )
+        st.markdown("#### 🚛 " + t("One operator dominates"))
+        st.markdown(t("home.card.operator").format(
+            company=lead_company, share=f"{lead_share:.0f}%"))
 
 if clean:
-    st.success(
-        "✅ **The data is clean.** No zero or negative net weights, no missing "
-        "service types, no duplicate tickets. Full integrity checks on the "
-        "**Data Quality & Catalog** page."
-    )
+    st.success(t("home.clean"))
 
 st.divider()
 st.subheader(t("How to read this dashboard"))
-st.markdown(
-    "- **The story →** *Overview, Service Types, Operators & Fleet, GEOCYCLE "
-    "Recovery* — the narrative, in order.\n"
-    "- **Explore →** *Ask the Data* — put questions to the dataset and get "
-    "instant answers.\n"
-    "- **Trust & data →** *Data Quality & Catalog* — integrity checks plus a "
-    "model of every spreadsheet in the source archive.\n"
-    "- **System →** *Settings* — pipeline status, reloads, cloud export."
-)
-st.caption("Use the grouped navigation in the sidebar.")
+st.markdown(t("home.howto"))
+st.caption(t("Use the grouped navigation in the sidebar."))

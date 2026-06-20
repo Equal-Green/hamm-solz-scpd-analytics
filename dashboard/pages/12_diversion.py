@@ -36,10 +36,7 @@ c3.metric(t("kpi.current_diversion"), f"{cur_div:.2f}%")
 
 st.divider()
 st.subheader(t("Composition & diversion scenario"))
-st.caption(
-    "The source caracterización studies aren't a clean per-tonne table, so set "
-    "the composition below (defaults reflect typical Ecuadorian municipal solid "
-    "waste). Source studies are listed at the bottom for calibration.")
+st.caption(t("dv.composition"))
 
 cc1, cc2, cc3 = st.columns(3)
 organic = cc1.slider("Organic %", 0, 80, 55)
@@ -71,11 +68,9 @@ with col_b:
     st.plotly_chart(apply_layout(fig2, t("Diversion potential (3-yr total)")),
                     use_container_width=True)
 
-st.success(
-    f"At **{capture}%** capture of the divertible fraction, diversion would rise "
-    f"from **{cur_div:.2f}%** to **{new_rate:.1f}%** — about "
-    f"**{achievable_t:,.0f} t** kept out of Las Iguanas over the period "
-    f"(vs {recovered:,.0f} t recovered today).")
+st.success(t("dv.scenario").format(
+    capture=f"{capture}%", cur=f"{cur_div:.2f}%", new=f"{new_rate:.1f}%",
+    ach=f"{achievable_t:,.0f}", rec=f"{recovered:,.0f}"))
 
 st.divider()
 st.markdown("**Source characterization studies** (loaded in DuckDB for calibration):")
@@ -88,5 +83,5 @@ car = con.execute("""
 if not car.empty:
     st.dataframe(car, use_container_width=True, hide_index=True)
 else:
-    st.caption("Characterization tables not found in the catalog — build the "
-               "catalog on the Data Quality page.")
+    st.caption(t("Characterization tables not found in the catalog — build the "
+                 "catalog on the Data Quality page."))

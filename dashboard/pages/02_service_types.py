@@ -23,13 +23,9 @@ render_header(t("page.services"), t("Trips and tonnage by waste service category
 # Anomaly callout
 an = q.servicios_especial_anomaly(con)
 if an["pct"] is not None:
-    st.error(
-        f"⚠️ **Anomaly — SERVICIOS ESPECIAL trip spike.** "
-        f"Trips rose **{an['pct']:+.1f}%** from **{an['y2023']:,}** (2023) to "
-        f"**{an['y2024']:,}** (2024). "
-        f"(The project brief labelled this ~+83%; the live figure from the data "
-        f"is {an['pct']:+.0f}%.)"
-    )
+    st.error(t("sv.anomaly").format(
+        pct=f"{an['pct']:+.1f}%", y23=f"{an['y2023']:,}", y24=f"{an['y2024']:,}",
+        pct0=f"{an['pct']:+.0f}%"))
 
 years = q.years(con)
 year = st.selectbox(t("word.filter_year"), [t("word.all")] + [str(y) for y in years])
@@ -56,4 +52,4 @@ st.divider()
 st.subheader(t("Year-over-year trips by service"))
 yoy = q.service_yoy(con)
 st.dataframe(yoy, use_container_width=True, hide_index=True)
-st.caption("`A->B %` columns show the year-over-year change in trip count.")
+st.caption(t("`A->B %` columns show the year-over-year change in trip count."))

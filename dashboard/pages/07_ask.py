@@ -63,8 +63,7 @@ st.divider()
 
 # --- conversation transcript -------------------------------------------------
 if not st.session_state.ask_history:
-    st.info("Pick a question above, or type one below — e.g. *“who hauls the "
-            "most waste?”* or *“is volume growing?”*")
+    st.info(t("ask.prompt"))
 else:
     if st.button("🧹 Clear conversation"):
         st.session_state.ask_history = []

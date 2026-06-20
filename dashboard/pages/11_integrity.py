@@ -23,10 +23,8 @@ render_header(t("page.integrity"),
                 "integrity flags."), eyebrow=t("eyebrow.brand"))
 
 an = q.servicios_especial_anomaly(con)
-st.error(
-    f"⚠️ **SERVICIOS ESPECIAL** trips rose **{an['pct']:+.0f}%** "
-    f"({an['y2023']:,} → {an['y2024']:,}) from 2023 to 2024. Below: which "
-    "operators drove it — the first place to check for tariff leakage.")
+st.error(t("in.anomaly").format(
+    pct=f"{an['pct']:+.0f}%", y23=f"{an['y2023']:,}", y24=f"{an['y2024']:,}"))
 
 # --- who drove the spike -----------------------------------------------------
 eg = q.especial_growth_by_empresa(con)
@@ -61,7 +59,4 @@ st.markdown("**Duplicate-weighing candidates** — same plate, same day, "
 st.dataframe(dup["sample"], use_container_width=True, hide_index=True,
              column_config={"placa": "PLACA", "dia": "Day",
                             "peso_neto": "Net kg", "repeats": "Repeats"})
-st.caption(
-    "Duplicates can be legitimate (a truck running the same route twice with an "
-    "identical load) or double-counted tickets. Each repeated ticket that "
-    "shouldn't be billed twice is potential revenue leakage worth auditing.")
+st.caption(t("in.duplicates"))

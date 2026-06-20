@@ -41,10 +41,7 @@ pct = ul["under"] / ul["total"] * 100 if ul["total"] else 0
 k3.metric(t("kpi.under_trips"), f"{ul['under']:,}", f"{pct:.0f}% of trips")
 k4.metric(t("kpi.light_tonnage"), f"{ul['under_tonnes']:,.0f} t")
 
-st.caption(
-    f"“Under-loaded” = net payload below {thr:,} kg (half the fleet median). "
-    "These are trucks dispatched well below capacity — candidates for route "
-    "consolidation.")
+st.caption(t("ef.underloaded").format(thr=f"{thr:,}"))
 
 st.divider()
 col_a, col_b = st.columns(2)
@@ -76,5 +73,5 @@ if not hd.empty:
     fig3.update_layout(height=360, margin=dict(l=8, r=8, t=10, b=8),
                        font=dict(family="Inter", color="#141414"))
     st.plotly_chart(fig3, use_container_width=True)
-    st.caption("Where the day's arrivals concentrate — peaks are weighbridge "
-               "congestion windows worth staffing for.")
+    st.caption(t("Where the day's arrivals concentrate — peaks are weighbridge "
+                 "congestion windows worth staffing for."))

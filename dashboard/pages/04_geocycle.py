@@ -20,12 +20,7 @@ inject_css()
 ensure_loaded(con)
 
 render_header(t("page.geocycle"), t("Material recovery — inverted weigh logic."), eyebrow="SCPD ANALYTICS · RECOVERY")
-st.info(
-    "**Inverted weight logic.** GEOCYCLE trucks arrive **empty** and leave "
-    "**loaded** with recovered material, so `PESO_SALIDA > PESO_INGRESO` is "
-    "correct here and net recovered = exit − entry (the opposite of landfill "
-    "deliveries)."
-)
+st.info(t("gc.inverted"))
 
 rk = q.retirados_kpis(con)
 c1, c2, c3, c4 = st.columns(4)
