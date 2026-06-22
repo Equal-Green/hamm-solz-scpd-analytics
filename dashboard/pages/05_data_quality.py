@@ -99,14 +99,7 @@ tab_arch, tab_quality, tab_catalog, tab_src = st.tabs(
 # ======================================================================
 with tab_arch:
     inv = _inventory()
-    st.markdown(
-        "Everything in this report traces back to a single delivery: the "
-        "**`INFORMACIÓN`** folder handed over by the municipality "
-        "(CIRCULAREP / Consorcio URVASEO). It mixes **operational data** "
-        "(spreadsheets, a routes map) with a large body of **engineering and "
-        "policy documents** (PDFs, CAD drawings, GIS). This tab orients you on "
-        "what's inside and how each part feeds the analytics."
-    )
+    st.markdown(t("dq.archive.intro"))
     loaded = q.catalog_totals(con)["files_in_duckdb"] if q.catalog_count(con) else 4
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Files delivered", f"{inv['total_files']:,}")
@@ -126,7 +119,7 @@ with tab_arch:
             exts = "  ".join(f"`{e}`×{n}" for e, n in list(f["exts"].items())[:6])
             with st.container(border=True):
                 head = f"{info['icon'] if info else '📁'} **{f['folder']}**"
-                st.markdown(f"{head} — {f['files']} files")
+                st.markdown(f"{head} — {f['files']} " + t("files"))
                 if info:
                     st.markdown(info["purpose"])
                     st.markdown(f"↳ **Feeds:** {info['feeds']}")
@@ -281,7 +274,7 @@ with tab_catalog:
         st.markdown("**Per-file data model** — expand for sheets and columns.")
         for fname in summary["file_name"]:
             loaded = summary.loc[summary["file_name"] == fname, "loaded_table"].iloc[0]
-            tag = "  ·  ✅ in DuckDB" if isinstance(loaded, str) and loaded != "—" else ""
+            tag = ("  ·  ✅ " + t("in DuckDB")) if isinstance(loaded, str) and loaded != "—" else ""
             with st.expander(f"{fname}{tag}"):
                 sheets = q.catalog_sheets(con, fname)
                 for _, srow in sheets.iterrows():

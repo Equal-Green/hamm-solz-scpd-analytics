@@ -159,6 +159,110 @@ def t(key):
     return entry.get(lang) or entry.get(_DEFAULT) or key
 
 
+# --- automatic translation layer --------------------------------------------
+# Every Streamlit text call routes its display string through translate(), so
+# no string can be "missed". Strings absent from TR fall back to English (and
+# are recorded when I18N_RECORD is set, to extract the full set to translate).
+import os as _os  # noqa: E402
+
+_RECORD = bool(_os.environ.get("I18N_RECORD"))
+_MISSING = set()
+
+
+def _skip(s):
+    """Don't translate HTML, code/ascii blocks, or pure data/number strings."""
+    st_ = s.strip()
+    if not st_:
+        return True
+    if st_[0] == "<" or "style=" in st_ or st_.startswith("```") or "<div" in st_:
+        return True
+    if not any(c.isalpha() for c in st_):   # numbers / punctuation only
+        return True
+    return False
+
+
+def translate(s):
+    if not isinstance(s, str) or _skip(s):
+        return s
+    entry = TR.get(s)
+    if entry:
+        lang = current_lang()
+        return entry.get(lang) or entry.get(_DEFAULT) or s
+    if _RECORD:
+        _MISSING.add(s)
+    return s
+
+
+def _install_patches():
+    """Patch DeltaGenerator + st so display strings auto-translate. Idempotent."""
+    from streamlit.delta_generator import DeltaGenerator as _DG
+    if getattr(_DG, "_i18n_patched", False):
+        return
+    _DG._i18n_patched = True
+
+    def _wrap(orig):
+        def w(self, *a, **k):
+            if a and isinstance(a[0], str):
+                a = (translate(a[0]),) + a[1:]
+            for key in ("label", "body"):
+                if isinstance(k.get(key), str):
+                    k[key] = translate(k[key])
+            return orig(self, *a, **k)
+        return w
+
+    # first-arg text methods (label / body / value-as-text)
+    for name in ("markdown", "caption", "subheader", "header", "title", "write",
+                 "info", "success", "warning", "error", "text", "button",
+                 "download_button", "checkbox", "toggle", "radio", "selectbox",
+                 "multiselect", "slider", "select_slider", "text_input",
+                 "number_input", "text_area", "date_input", "time_input",
+                 "chat_input", "expander", "metric", "tab", "popover"):
+        orig = getattr(_DG, name, None)
+        if orig:
+            setattr(_DG, name, _wrap(orig))
+
+    # tabs: translate the list of labels
+    _tabs = getattr(_DG, "tabs", None)
+    if _tabs:
+        def _tabs_w(self, labels, *a, **k):
+            if isinstance(labels, (list, tuple)):
+                labels = [translate(x) if isinstance(x, str) else x for x in labels]
+            return _tabs(self, labels, *a, **k)
+        setattr(_DG, "tabs", _tabs_w)
+
+    # Top-level st.* functions are bound separately from the class, so patch
+    # them too (covers st.markdown / st.subheader / st.write inside with-blocks).
+    def _wrap_fn(orig):
+        def w(*a, **k):
+            if a and isinstance(a[0], str):
+                a = (translate(a[0]),) + a[1:]
+            for key in ("label", "body"):
+                if isinstance(k.get(key), str):
+                    k[key] = translate(k[key])
+            return orig(*a, **k)
+        return w
+
+    for name in ("markdown", "caption", "subheader", "header", "title", "write",
+                 "info", "success", "warning", "error", "text", "button",
+                 "checkbox", "toggle", "radio", "selectbox", "multiselect",
+                 "slider", "select_slider", "text_input", "number_input",
+                 "text_area", "chat_input", "expander", "metric", "popover"):
+        orig = getattr(st, name, None)
+        if orig:
+            setattr(st, name, _wrap_fn(orig))
+
+    _otabs = getattr(st, "tabs", None)
+    if _otabs:
+        def _stabs(labels, *a, **k):
+            if isinstance(labels, (list, tuple)):
+                labels = [translate(x) if isinstance(x, str) else x for x in labels]
+            return _otabs(labels, *a, **k)
+        st.tabs = _stabs
+
+
+_install_patches()
+
+
 def language_selector():
     """Sidebar language picker; stores the code in session_state['lang']."""
     labels = list(LANGUAGES.keys())

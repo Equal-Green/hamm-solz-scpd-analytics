@@ -9,6 +9,380 @@ TR_PAGES = {
     "grew": {"es": "creció", "ko": "증가"},
     "fell": {"es": "cayó", "ko": "감소"},
 
+    # --- metric labels (data_quality / settings / architecture / geo) ---
+    "Total rows": {"es": "Filas totales", "ko": "총 행 수"},
+    "Total rows (all)": {"es": "Filas totales (todas)", "ko": "총 행 수 (전체)"},
+    "Zero net weight": {"es": "Peso neto cero", "ko": "순중량 0"},
+    "Negative net weight": {"es": "Peso neto negativo", "ko": "음수 순중량"},
+    "Duplicate ticket/year": {"es": "Ticket/año duplicado", "ko": "중복 티켓/연도"},
+    "Non-positive net": {"es": "Neto no positivo", "ko": "0 이하 순중량"},
+    "Null date / org": {"es": "Fecha / org nula", "ko": "날짜/조직 누락"},
+    "Files delivered": {"es": "Archivos entregados", "ko": "전달 파일"},
+    "Top-level folders": {"es": "Carpetas de nivel superior", "ko": "최상위 폴더"},
+    "File types": {"es": "Tipos de archivo", "ko": "파일 유형"},
+    "Tabular files → DuckDB": {"es": "Archivos tabulares → DuckDB",
+                               "ko": "표 형식 파일 → DuckDB"},
+    "Files in DuckDB": {"es": "Archivos en DuckDB", "ko": "DuckDB 내 파일"},
+    "Spreadsheets": {"es": "Hojas de cálculo", "ko": "스프레드시트"},
+    "Sheets / tabs": {"es": "Hojas / pestañas", "ko": "시트 / 탭"},
+    "Source tables loaded": {"es": "Tablas de origen cargadas",
+                             "ko": "적재된 원천 테이블"},
+    "DuckDB file size": {"es": "Tamaño del archivo DuckDB", "ko": "DuckDB 파일 크기"},
+    "Source size": {"es": "Tamaño de origen", "ko": "원천 크기"},
+    "Rows loaded": {"es": "Filas cargadas", "ko": "적재 행 수"},
+    "Load time (one-time)": {"es": "Tiempo de carga (única vez)",
+                             "ko": "적재 시간 (1회)"},
+    "Query response": {"es": "Respuesta de consulta", "ko": "쿼리 응답"},
+
+    # --- tab labels ---
+    "📂 The archive": {"es": "📂 El archivo", "ko": "📂 아카이브"},
+    "✅ Integrity & quality": {"es": "✅ Integridad y calidad",
+                              "ko": "✅ 무결성 · 품질"},
+    "📇 Catalog": {"es": "📇 Catálogo", "ko": "📇 카탈로그"},
+    "🗄️ Source tables": {"es": "🗄️ Tablas de origen", "ko": "🗄️ 원천 테이블"},
+    "🗂️ Folder map": {"es": "🗂️ Mapa de carpetas", "ko": "🗂️ 폴더 맵"},
+    "🔗 Data lineage": {"es": "🔗 Linaje de datos", "ko": "🔗 데이터 계보"},
+    "📦 File types": {"es": "📦 Tipos de archivo", "ko": "📦 파일 유형"},
+
+    # --- buttons ---
+    "🔄 Rebuild catalog": {"es": "🔄 Reconstruir catálogo",
+                           "ko": "🔄 카탈로그 재생성"},
+    "🔄 Reload all source tables": {
+        "es": "🔄 Recargar todas las tablas de origen",
+        "ko": "🔄 모든 원천 테이블 재적재"},
+    "📥 Load all source tables": {"es": "📥 Cargar todas las tablas de origen",
+                                  "ko": "📥 모든 원천 테이블 적재"},
+    "📇 Build catalog": {"es": "📇 Construir catálogo", "ko": "📇 카탈로그 생성"},
+    "⬆️ Export to Postgres": {"es": "⬆️ Exportar a Postgres",
+                             "ko": "⬆️ Postgres로 내보내기"},
+    "🔄 Re-run pipeline (clear & reload)": {
+        "es": "🔄 Reejecutar pipeline (limpiar y recargar)",
+        "ko": "🔄 파이프라인 재실행 (초기화 후 재적재)"},
+    "🔄 Rescan / reload": {"es": "🔄 Reescanear / recargar", "ko": "🔄 재스캔 / 재적재"},
+
+    # --- control labels (geo / efficiency / diversion) ---
+    "Routes": {"es": "Rutas", "ko": "경로"},
+    "Color sub-zones by": {"es": "Colorear sub-zonas por", "ko": "세부 구역 색상 기준"},
+    "Focus sub-zone": {"es": "Enfocar sub-zona", "ko": "세부 구역 집중"},
+    "Organic %": {"es": "Orgánico %", "ko": "유기물 %"},
+    "Recyclable % (paper, plastic, glass, metal)": {
+        "es": "Reciclable % (papel, plástico, vidrio, metal)",
+        "ko": "재활용 % (종이·플라스틱·유리·금속)"},
+    "Capture rate of divertible %": {
+        "es": "Tasa de captura de lo desviable %", "ko": "전환 가능분 포집률 %"},
+
+    # --- Ask the Data: categories, prompt, questions ---
+    "##### 💡 Suggested questions": {"es": "##### 💡 Preguntas sugeridas",
+                                     "ko": "##### 💡 추천 질문"},
+    "🧹 Clear conversation": {"es": "🧹 Borrar conversación", "ko": "🧹 대화 지우기"},
+    "Ask a question about the data…": {
+        "es": "Haz una pregunta sobre los datos…", "ko": "데이터에 대해 질문하세요…"},
+    "Volume & trends": {"es": "Volumen y tendencias", "ko": "물량 · 추세"},
+    "Service mix": {"es": "Composición de servicios", "ko": "서비스 구성"},
+    "Operators & fleet": {"es": "Operadores y flota", "ko": "운영사 · 차량"},
+    "Geo & routes": {"es": "Geografía y rutas", "ko": "지리 · 경로"},
+    "Recovery & quality": {"es": "Recuperación y calidad", "ko": "회수 · 품질"},
+    "How much waste is delivered, and is it growing?": {
+        "es": "¿Cuántos residuos se entregan y están creciendo?",
+        "ko": "폐기물 반입량은 얼마이며 증가하고 있나요?"},
+    "Which month is busiest for deliveries?": {
+        "es": "¿Qué mes es el más activo para entregas?",
+        "ko": "반입이 가장 많은 달은?"},
+    "Which city sectors generate the most waste?": {
+        "es": "¿Qué sectores de la ciudad generan más residuos?",
+        "ko": "어느 도시 구역이 가장 많은 폐기물을 배출하나요?"},
+    "How big was the SERVICIOS ESPECIAL spike?": {
+        "es": "¿Qué tan grande fue el alza de SERVICIOS ESPECIAL?",
+        "ko": "SERVICIOS ESPECIAL 급증 규모는?"},
+    "Which service type grew the most year-over-year?": {
+        "es": "¿Qué tipo de servicio creció más interanualmente?",
+        "ko": "전년 대비 가장 많이 증가한 서비스 유형은?"},
+    "What's the waste mix by service type?": {
+        "es": "¿Cuál es la composición por tipo de servicio?",
+        "ko": "서비스 유형별 폐기물 구성은?"},
+    "Which service carries the heaviest loads?": {
+        "es": "¿Qué servicio lleva las cargas más pesadas?",
+        "ko": "가장 무거운 적재를 운반하는 서비스는?"},
+    "Who are the biggest operators by tonnage?": {
+        "es": "¿Quiénes son los mayores operadores por tonelaje?",
+        "ko": "톤수 기준 최대 운영사는?"},
+    "How many companies use the landfill?": {
+        "es": "¿Cuántas empresas usan el relleno?",
+        "ko": "몇 개 업체가 매립장을 이용하나요?"},
+    "What vehicle types deliver most often?": {
+        "es": "¿Qué tipos de vehículo entregan con más frecuencia?",
+        "ko": "가장 자주 반입하는 차량 유형은?"},
+    "Which collection zone produces the most waste?": {
+        "es": "¿Qué zona de recolección produce más residuos?",
+        "ko": "가장 많은 폐기물을 배출하는 수거 구역은?"},
+    "What are the busiest micro-routes?": {
+        "es": "¿Cuáles son las micro-rutas más activas?",
+        "ko": "가장 바쁜 마이크로 경로는?"},
+    "How much does GEOCYCLE recover vs landfill?": {
+        "es": "¿Cuánto recupera GEOCYCLE frente al relleno?",
+        "ko": "GEOCYCLE 회수량 대 매립량은?"},
+    "How complete and clean is the data?": {
+        "es": "¿Qué tan completos y limpios están los datos?",
+        "ko": "데이터는 얼마나 완전하고 깨끗한가요?"},
+
+    # --- short captions / labels ---
+    "Each folder, what it is, and where it lands in the report.": {
+        "es": "Cada carpeta, qué es y dónde aparece en el informe.",
+        "ko": "각 폴더의 정체와 보고서에서의 위치."},
+    "**Per-file data model** — expand for sheets and columns.": {
+        "es": "**Modelo de datos por archivo** — expande para ver hojas y "
+              "columnas.",
+        "ko": "**파일별 데이터 모델** — 시트와 컬럼을 보려면 펼치세요."},
+    "Data model (sheets, columns) and row counts for every spreadsheet in the "
+    "source ZIP.": {
+        "es": "Modelo de datos (hojas, columnas) y conteo de filas de cada hoja "
+              "del ZIP de origen.",
+        "ko": "원천 ZIP의 모든 스프레드시트에 대한 데이터 모델(시트·컬럼)과 행 수."},
+    "🛠️ Data improvement opportunities (for the next data pull)": {
+        "es": "🛠️ Oportunidades de mejora de datos (para la próxima entrega)",
+        "ko": "🛠️ 데이터 개선 기회 (다음 데이터 수집 시)"},
+    "**Source characterization studies** (loaded in DuckDB for calibration):": {
+        "es": "**Estudios de caracterización de origen** (cargados en DuckDB "
+              "para calibración):",
+        "ko": "**원천 caracterización 연구** (보정용으로 DuckDB에 적재됨):"},
+    "**Duplicate-weighing candidates** — same plate, same day, identical net "
+    "weight:": {
+        "es": "**Candidatos a doble pesaje** — misma placa, mismo día, peso neto "
+              "idéntico:",
+        "ko": "**중복 계량 후보** — 동일 번호판, 동일 날짜, 동일 순중량:"},
+    "Phase 2 — build the connection here; export is gated until enabled.": {
+        "es": "Fase 2 — configura la conexión aquí; la exportación está "
+              "bloqueada hasta habilitarse.",
+        "ko": "2단계 — 여기서 연결을 구성하세요. 활성화 전까지 내보내기는 잠겨 "
+              "있습니다."},
+    "files": {"es": "archivos", "ko": "개 파일"},
+    "transactions rows": {"es": "filas de transactions", "ko": "transactions 행 수"},
+    "retirados rows": {"es": "filas de retirados", "ko": "retirados 행 수"},
+    "No zero or negative net-weight trips.": {
+        "es": "Sin viajes de peso neto cero o negativo.",
+        "ko": "순중량 0 또는 음수 운행 없음."},
+    "in DuckDB": {"es": "en DuckDB", "ko": "DuckDB 적재됨"},
+    "**Cloud export:** 🔒 gated (coming soon)": {
+        "es": "**Exportación a la nube:** 🔒 bloqueada (próximamente)",
+        "ko": "**클라우드 내보내기:** 🔒 비활성 (준비 중)"},
+    "**Cloud export:** 🟢 enabled": {
+        "es": "**Exportación a la nube:** 🟢 habilitada",
+        "ko": "**클라우드 내보내기:** 🟢 활성화됨"},
+    "↳ **Feeds:** Geo reference.": {
+        "es": "↳ **Alimenta:** Referencia geográfica.",
+        "ko": "↳ **연결:** 지리 참조."},
+    "↳ **Feeds:** Planning context (reference).": {
+        "es": "↳ **Alimenta:** Contexto de planificación (referencia).",
+        "ko": "↳ **연결:** 계획 맥락 (참조)."},
+    "↳ **Feeds:** Policy context (PDF reference only).": {
+        "es": "↳ **Alimenta:** Contexto normativo (solo referencia PDF).",
+        "ko": "↳ **연결:** 정책 맥락 (PDF 참조 전용)."},
+    "↳ **Feeds:** **Capacity & Forecast** (disposal projection workbook); site "
+    "reference.": {
+        "es": "↳ **Alimenta:** **Capacidad y proyección** (libro de proyección "
+              "de disposición); referencia del sitio.",
+        "ko": "↳ **연결:** **용량 · 예측** (처분 전망 워크북); 부지 참조."},
+
+    # --- architecture ("How it works") prose ---
+    "arch.intro": {
+        "en": "Your report isn't a static PDF or a spreadsheet — it's a small, "
+              "**self-contained analytics application**. It runs entirely on one "
+              "machine with **no database server, no cloud account, and no "
+              "subscriptions**. Two open-source technologies make that possible.",
+        "es": "Tu informe no es un PDF estático ni una hoja de cálculo — es una "
+              "pequeña **aplicación analítica autónoma**. Funciona por completo en "
+              "una máquina, **sin servidor de base de datos, sin cuenta en la "
+              "nube y sin suscripciones**. Dos tecnologías de código abierto lo "
+              "hacen posible.",
+        "ko": "이 보고서는 정적 PDF나 스프레드시트가 아니라 작고 **독립적인 분석 "
+              "애플리케이션**입니다. **데이터베이스 서버도, 클라우드 계정도, 구독도 "
+              "없이** 한 대의 컴퓨터에서 완전히 작동합니다. 두 가지 오픈소스 기술이 "
+              "이를 가능하게 합니다."},
+    "arch.duck.h": {"en": "### 🦆 DuckDB — the engine",
+                    "es": "### 🦆 DuckDB — el motor", "ko": "### 🦆 DuckDB — 엔진"},
+    "arch.duck.b": {
+        "en": "DuckDB is an **analytical database that lives in a single file** "
+              "(`scpd.duckdb`). Think of it as *“SQLite for analytics”*: it needs "
+              "no server to install or run, yet it crunches hundreds of millions "
+              "of values in milliseconds because it's **columnar** — built for "
+              "summing, grouping and filtering, exactly what a report does.",
+        "es": "DuckDB es una **base de datos analítica que vive en un solo "
+              "archivo** (`scpd.duckdb`). Piénsalo como *«SQLite para analítica»*: "
+              "no necesita servidor para instalarse o ejecutarse, y aun así "
+              "procesa cientos de millones de valores en milisegundos porque es "
+              "**columnar** — hecho para sumar, agrupar y filtrar, justo lo que "
+              "hace un informe.",
+        "ko": "DuckDB는 **단일 파일(`scpd.duckdb`)에 담기는 분석용 데이터베이스**"
+              "입니다. *‘분석용 SQLite’*라고 생각하세요: 설치·실행에 서버가 필요 "
+              "없으면서도 **컬럼 기반**이라 수억 개의 값을 밀리초 단위로 처리합니다 "
+              "— 합계·그룹화·필터링에 최적화되어 보고서에 딱 맞습니다."},
+    "arch.stream.h": {"en": "### 🎈 Streamlit — the interface",
+                      "es": "### 🎈 Streamlit — la interfaz",
+                      "ko": "### 🎈 Streamlit — 인터페이스"},
+    "arch.stream.b": {
+        "en": "Streamlit turns Python analysis into an **interactive web app** — "
+              "the pages, charts, filters and maps you're clicking now. Every "
+              "control re-runs a query against DuckDB and redraws instantly. No "
+              "front-end engineering, no separate web server to manage.",
+        "es": "Streamlit convierte el análisis en Python en una **app web "
+              "interactiva** — las páginas, gráficos, filtros y mapas que estás "
+              "usando. Cada control reejecuta una consulta a DuckDB y redibuja al "
+              "instante. Sin ingeniería de front-end ni un servidor web aparte.",
+        "ko": "Streamlit은 Python 분석을 **인터랙티브 웹 앱**으로 바꿉니다 — 지금 "
+              "클릭하는 페이지·차트·필터·지도입니다. 모든 컨트롤이 DuckDB 쿼리를 "
+              "다시 실행해 즉시 다시 그립니다. 프런트엔드 개발도, 별도 웹 서버도 "
+              "필요 없습니다."},
+    "arch.steps": {
+        "en": "1. **Extract & transform (once).** A Python pipeline reads the "
+              "source ZIP, parses the large Excel files row-by-row (they're too "
+              "big to open normally), cleans dates and weights, and loads "
+              "everything into DuckDB. This runs once; after that the app starts "
+              "instantly.\n"
+              "2. **Store.** All ~524,000 weighbridge records plus every other "
+              "source table live in the single `scpd.duckdb` file — the portable "
+              "*warehouse*.\n"
+              "3. **Serve.** Each page asks DuckDB a question in SQL (\"net "
+              "tonnage by zone in 2024\") and Streamlit renders the answer as a "
+              "chart, table or map.",
+        "es": "1. **Extraer y transformar (una vez).** Un pipeline en Python lee "
+              "el ZIP de origen, analiza los grandes archivos Excel fila por fila "
+              "(son demasiado grandes para abrirlos normalmente), limpia fechas y "
+              "pesos, y carga todo en DuckDB. Se ejecuta una vez; después la app "
+              "arranca al instante.\n"
+              "2. **Almacenar.** Los ~524.000 registros de báscula y todas las "
+              "demás tablas viven en el único archivo `scpd.duckdb` — el "
+              "*almacén* portátil.\n"
+              "3. **Servir.** Cada página hace una pregunta a DuckDB en SQL "
+              "(«tonelaje neto por zona en 2024») y Streamlit muestra la "
+              "respuesta como gráfico, tabla o mapa.",
+        "ko": "1. **추출·변환 (1회).** Python 파이프라인이 원천 ZIP을 읽고, 대용량 "
+              "Excel 파일을 한 행씩 파싱(일반적으로 열기엔 너무 큼)하며, 날짜와 "
+              "중량을 정리해 모두 DuckDB에 적재합니다. 한 번만 실행되며 이후 앱은 "
+              "즉시 시작됩니다.\n"
+              "2. **저장.** 약 524,000건의 계량 기록과 그 외 모든 원천 테이블이 단일 "
+              "`scpd.duckdb` 파일에 담깁니다 — 이동 가능한 *데이터 웨어하우스*.\n"
+              "3. **제공.** 각 페이지는 SQL로 DuckDB에 질문(\"2024년 구역별 순 "
+              "톤수\")하고 Streamlit이 답을 차트·표·지도로 렌더링합니다."},
+    "arch.portable": {
+        "en": "**Portable**  \nThe whole report is a folder. Clone it, point it "
+              "at the data, run one command. No servers to provision.",
+        "es": "**Portátil**  \nTodo el informe es una carpeta. Clónala, apúntala "
+              "a los datos y ejecuta un comando. Sin servidores que aprovisionar.",
+        "ko": "**이식성**  \n보고서 전체가 하나의 폴더입니다. 복제하고 데이터를 "
+              "지정한 뒤 명령 하나만 실행하세요. 준비할 서버가 없습니다."},
+    "arch.fast": {
+        "en": "**Fast & offline**  \nColumnar queries return in milliseconds, "
+              "with no internet required (except map tiles).",
+        "es": "**Rápido y sin conexión**  \nLas consultas columnares responden en "
+              "milisegundos, sin necesidad de internet (salvo los mapas).",
+        "ko": "**빠르고 오프라인**  \n컬럼 기반 쿼리는 밀리초 안에 응답하며, 인터넷이 "
+              "필요 없습니다 (지도 타일 제외)."},
+    "arch.repro": {
+        "en": "**Reproducible**  \nThe pipeline is code. Re-run it on next year's "
+              "data and the same report rebuilds itself.",
+        "es": "**Reproducible**  \nEl pipeline es código. Reejecútalo con los "
+              "datos del próximo año y el mismo informe se reconstruye solo.",
+        "ko": "**재현 가능**  \n파이프라인은 코드입니다. 내년 데이터로 다시 실행하면 "
+              "같은 보고서가 스스로 재생성됩니다."},
+    "arch.note": {
+        "en": "Note on the source files: the delivery ZIP uses a streaming "
+              "format that standard tools can't open, and the main Excel files "
+              "are 65–92 MB each (one sheet expands to ~450 MB of XML). The "
+              "pipeline reads them with custom binary + streaming parsers — a "
+              "one-time engineering step so the day-to-day report stays simple "
+              "and instant.",
+        "es": "Nota sobre los archivos de origen: el ZIP usa un formato de "
+              "streaming que las herramientas estándar no pueden abrir, y los "
+              "Excel principales pesan 65–92 MB cada uno (una hoja se expande a "
+              "~450 MB de XML). El pipeline los lee con analizadores binarios + "
+              "de streaming a medida — un paso de ingeniería único para que el "
+              "informe diario sea simple e instantáneo.",
+        "ko": "원천 파일 참고: 전달 ZIP은 표준 도구로 열 수 없는 스트리밍 형식이며, "
+              "주요 Excel 파일은 각 65~92MB입니다(한 시트가 ~450MB XML로 확장). "
+              "파이프라인은 맞춤형 바이너리 + 스트리밍 파서로 이를 읽습니다 — 일상 "
+              "보고서를 단순하고 즉각적으로 유지하기 위한 일회성 엔지니어링 단계입니다."},
+    "arch.cloud": {
+        "en": "Everything above runs **locally and offline**. When you want it "
+              "hosted, the same app deploys to a small container (e.g. Google "
+              "Cloud Run or Render) with the prebuilt `scpd.duckdb` baked in — or "
+              "its tables export to a Postgres / Supabase database. The hooks are "
+              "already in **Settings**; the offline version keeps working "
+              "regardless.",
+        "es": "Todo lo anterior funciona **local y sin conexión**. Cuando quieras "
+              "alojarlo, la misma app se despliega en un contenedor pequeño (p. "
+              "ej. Google Cloud Run o Render) con el `scpd.duckdb` ya construido — "
+              "o sus tablas se exportan a una base Postgres / Supabase. Los "
+              "ganchos ya están en **Configuración**; la versión offline sigue "
+              "funcionando igual.",
+        "ko": "위의 모든 것은 **로컬·오프라인**으로 작동합니다. 호스팅하려면 동일한 "
+              "앱을 사전 빌드된 `scpd.duckdb`를 포함해 소형 컨테이너(예: Google "
+              "Cloud Run, Render)에 배포하거나, 테이블을 Postgres / Supabase로 "
+              "내보낼 수 있습니다. 훅은 이미 **설정**에 있으며, 오프라인 버전은 "
+              "그대로 작동합니다."},
+
+    # --- data_quality archive intro + folder narratives ---
+    "dq.archive.intro": {
+        "en": "Everything in this report traces back to a single delivery: the "
+              "**`INFORMACIÓN`** folder handed over by the municipality "
+              "(CIRCULAREP / Consorcio URVASEO). It mixes **operational data** "
+              "(spreadsheets, a routes map) with a large body of **engineering "
+              "and policy documents** (PDFs, CAD drawings, GIS). This tab orients "
+              "you on what's inside and how each part feeds the analytics.",
+        "es": "Todo en este informe proviene de una única entrega: la carpeta "
+              "**`INFORMACIÓN`** entregada por el municipio (CIRCULAREP / "
+              "Consorcio URVASEO). Mezcla **datos operativos** (hojas de cálculo, "
+              "un mapa de rutas) con un gran conjunto de **documentos de "
+              "ingeniería y política** (PDF, planos CAD, GIS). Esta pestaña te "
+              "orienta sobre su contenido y cómo cada parte alimenta el análisis.",
+        "ko": "이 보고서의 모든 것은 단일 전달물에서 비롯됩니다: 시(CIRCULAREP / "
+              "Consorcio URVASEO)가 전달한 **`INFORMACIÓN`** 폴더입니다. **운영 "
+              "데이터**(스프레드시트, 경로 지도)와 방대한 **엔지니어링·정책 "
+              "문서**(PDF, CAD 도면, GIS)가 섞여 있습니다. 이 탭은 그 내용과 각 "
+              "부분이 분석에 어떻게 기여하는지 안내합니다."},
+    "Composition studies of municipal waste by stratum and year (2012–2026) — "
+    "what the garbage is actually made of.": {
+        "es": "Estudios de composición de residuos urbanos por estrato y año "
+              "(2012–2026) — de qué está hecha realmente la basura.",
+        "ko": "계층·연도별(2012–2026) 도시 폐기물 구성 연구 — 쓰레기가 실제로 무엇으로 "
+              "이루어졌는지."},
+    "A supplementary geographic layer (KMZ).": {
+        "es": "Una capa geográfica complementaria (KMZ).",
+        "ko": "보조 지리 레이어 (KMZ)."},
+    "National & municipal norms governing solid-waste management.": {
+        "es": "Normas nacionales y municipales que rigen la gestión de residuos "
+              "sólidos.",
+        "ko": "고형 폐기물 관리를 규율하는 국가·시 규정."},
+    "Land-use and development plans, plus an ArcGIS map package.": {
+        "es": "Planes de uso de suelo y desarrollo, más un paquete de mapas "
+              "ArcGIS.",
+        "ko": "토지 이용·개발 계획과 ArcGIS 맵 패키지."},
+    "Catastro Urbano — 598,715 parcels — plus a rural cartography shapefile.": {
+        "es": "Catastro Urbano — 598.715 predios — más un shapefile de "
+              "cartografía rural.",
+        "ko": "Catastro Urbano — 필지 598,715개 — 및 농촌 지형도 셰이프파일."},
+    "Site engineering drawings (DWG) and disposal-quantity records & projections "
+    "for the active landfill.": {
+        "es": "Planos de ingeniería del sitio (DWG) y registros y proyecciones de "
+              "cantidades dispuestas del relleno activo.",
+        "ko": "활성 매립장의 부지 엔지니어링 도면(DWG)과 처분량 기록·전망."},
+    "GIRS diagnosis, environmental management plan, and a collection-trip "
+    "register.": {
+        "es": "Diagnóstico GIRS, plan de manejo ambiental y un registro de viajes "
+              "de recolección.",
+        "ko": "GIRS 진단, 환경 관리 계획, 수거 운행 대장."},
+    "The routes KML, micro-route drawings (DWG), and the EOP01/EOP02 production "
+    "plans.": {
+        "es": "El KML de rutas, los planos de micro-rutas (DWG) y los planes de "
+              "producción EOP01/EOP02.",
+        "ko": "경로 KML, 마이크로 경로 도면(DWG), EOP01/EOP02 생산 계획."},
+    "**How raw files become the data model.** Four folders carry "
+    "machine-readable data we ingest; the rest are documents that give context.": {
+        "es": "**Cómo los archivos crudos se convierten en el modelo de datos.** "
+              "Cuatro carpetas contienen datos legibles por máquina que "
+              "ingerimos; el resto son documentos de contexto.",
+        "ko": "**원시 파일이 데이터 모델이 되는 과정.** 네 개 폴더는 우리가 적재하는 "
+              "기계 판독 데이터를 담고, 나머지는 맥락을 제공하는 문서입니다."},
+
     # --- cover (title) page ---
     "MUNICIPAL SOLID WASTE ANALYTICS": {
         "es": "ANÁLISIS DE RESIDUOS SÓLIDOS URBANOS",
