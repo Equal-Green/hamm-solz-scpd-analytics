@@ -14,7 +14,7 @@ from state import ensure_loaded
 from style import inject_css, render_header
 from theme import COLORS, apply_layout
 from analysis import queries as q
-from i18n import t
+from i18n import t, notr
 from config import ZIP_PATH
 from pipeline.catalog import build_catalog
 from pipeline.tables import load_all_tables, REGISTRY_SCHEMA
@@ -123,7 +123,7 @@ with tab_arch:
                 if info:
                     st.markdown(info["purpose"])
                     st.markdown(f"↳ **Feeds:** {info['feeds']}")
-                st.caption(exts)
+                st.caption(notr(exts))
 
     # ---- Data lineage ----
     with sub_lineage:
@@ -284,7 +284,7 @@ with tab_catalog:
                                 f"{srow['n_columns']} cols × {srow['n_rows']:,} rows")
                     if srow["columns"] and srow["columns"] != "[]":
                         cs = json.loads(srow["columns"])
-                        st.caption(", ".join(cs) if cs else "—")
+                        st.caption(notr(", ".join(cs)) if cs else "—")
         if _HAS_ZIP and st.button("🔄 Rebuild catalog"):
             box = st.status("Rescanning…", expanded=True)
             build_catalog(con, on_status=lambda m: box.update(label=m))

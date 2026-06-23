@@ -197,6 +197,14 @@ except Exception:  # noqa: BLE001 — optional; offline falls back to cache/EN
     _GT = None
 
 
+_NOTR = "⁠"  # invisible marker: "never translate this string"
+
+
+def notr(s):
+    """Mark a (data) string so the auto-translator leaves it untouched."""
+    return _NOTR + s if isinstance(s, str) else s
+
+
 def _has_lower_ascii(s):
     return any("a" <= c <= "z" for c in s)
 
@@ -226,7 +234,11 @@ def _save_cache():
 
 
 def translate(s):
-    if not isinstance(s, str) or _skip(s):
+    if not isinstance(s, str):
+        return s
+    if s.startswith(_NOTR):           # explicitly marked data → strip marker
+        return s[len(_NOTR):]
+    if _skip(s):
         return s
     lang = current_lang()
     if lang == _DEFAULT:
