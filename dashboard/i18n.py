@@ -160,33 +160,98 @@ def t(key):
 
 
 # --- automatic translation layer --------------------------------------------
-# Every Streamlit text call routes its display string through translate(), so
-# no string can be "missed". Strings absent from TR fall back to English (and
-# are recorded when I18N_RECORD is set, to extract the full set to translate).
+# Every Streamlit text call routes its display string through translate():
+#   1. curated dictionary (TR) — precise, brand/proper-noun control
+#   2. on-disk cache (i18n_cache.json) — instant, offline, committed
+#   3. Google Translate (deep-translator) — fills anything new, when online
+# Data values, DuckDB field/table names, code, and HTML are never translated.
+import json as _json  # noqa: E402
 import os as _os  # noqa: E402
+import re as _re  # noqa: E402
 
 _RECORD = bool(_os.environ.get("I18N_RECORD"))
 _MISSING = set()
 
+# Field / table names and tokens that must stay in their original form.
+NO_TRANSLATE = {
+    "num_ticket", "tipo_servicio", "tipo_vehiculo", "empresa", "sector", "placa",
+    "zona", "sub_zona", "micro_ruta", "organizacion", "peso_neto", "peso_ingreso",
+    "peso_salida", "fec_ingreso", "transactions", "retirados", "DATABASE_URL",
+    "EqualGreen", "DuckDB", "Streamlit", "GEOCYCLE", "CIRCULAREP",
+}
+_HANGUL = _re.compile(r"[가-힣]")
+_DATA_MARKERS = (".xlsx", ".csv", ".kml", ".kmz", ".png", ".dwg", "src_",
+                 "scpd.duckdb")
+
+_CACHE_PATH = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                            "i18n_cache.json")
+try:
+    with open(_CACHE_PATH, encoding="utf-8") as _f:
+        _CACHE = _json.load(_f)
+except (OSError, ValueError):
+    _CACHE = {}
+
+try:
+    from deep_translator import GoogleTranslator as _GT
+except Exception:  # noqa: BLE001 — optional; offline falls back to cache/EN
+    _GT = None
+
+
+def _has_lower_ascii(s):
+    return any("a" <= c <= "z" for c in s)
+
 
 def _skip(s):
-    """Don't translate HTML, code/ascii blocks, or pure data/number strings."""
+    """Skip HTML, code/ascii blocks, pure numbers, and data/field values."""
     st_ = s.strip()
-    if not st_:
+    if not st_ or st_[0] == "<" or "style=" in st_ or st_.startswith("```") \
+            or "<div" in st_:
         return True
-    if st_[0] == "<" or "style=" in st_ or st_.startswith("```") or "<div" in st_:
+    if not any(c.isalpha() for c in st_):
         return True
-    if not any(c.isalpha() for c in st_):   # numbers / punctuation only
+    low = st_.lower()
+    if any(m in low for m in _DATA_MARKERS):
+        return True
+    if st_.count(",") >= 2 and not _has_lower_ascii(st_):  # ALL-CAPS data lists
         return True
     return False
+
+
+def _save_cache():
+    try:
+        with open(_CACHE_PATH, "w", encoding="utf-8") as f:
+            _json.dump(_CACHE, f, ensure_ascii=False, indent=0)
+    except OSError:
+        pass
 
 
 def translate(s):
     if not isinstance(s, str) or _skip(s):
         return s
+    lang = current_lang()
+    if lang == _DEFAULT:
+        return s
+    # never translate field/table names, ALL-CAPS data, or already-target text
+    if s in NO_TRANSLATE or not _has_lower_ascii(s):
+        return s
+    if lang == "ko" and _HANGUL.search(s):
+        return s
+    # 1. cache (instant, offline)
+    bucket = _CACHE.setdefault(lang, {})
+    if s in bucket:
+        return bucket[s]
+    # 2. Google Translate — the default engine (when online), then cache it
+    if _GT is not None:
+        try:
+            out = _GT(source="en", target=lang).translate(s) or s
+            bucket[s] = out
+            _save_cache()
+            return out
+        except Exception:  # noqa: BLE001
+            pass
+    # 3. fallback: curated dictionary, else original English
     entry = TR.get(s)
     if entry:
-        lang = current_lang()
         return entry.get(lang) or entry.get(_DEFAULT) or s
     if _RECORD:
         _MISSING.add(s)

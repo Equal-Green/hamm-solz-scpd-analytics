@@ -4,3 +4,4 @@ plotly>=5.20
 openpyxl>=3.1
 pandas>=2.0
 numpy>=1.26
+deep-translator>=1.11
