@@ -243,6 +243,8 @@ def cobrand_lockup(on_dark=True, hamm_h=20, eg_size=30):
 
 def render_header(title, subtitle="", eyebrow="THE HAMM SOLZ × EQUALGREEN"):
     """Branded hero with the HAMM × EqualGreen lockup on every page."""
+    from i18n import translate            # translate text baked into the HTML
+    title, subtitle = translate(title), translate(subtitle)
     sub = f'<div class="scpd-sub">{subtitle}</div>' if subtitle else ""
     st.markdown(
         f'<div class="scpd-header">{cobrand_lockup()}'

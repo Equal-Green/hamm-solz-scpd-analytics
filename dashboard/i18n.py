@@ -172,16 +172,14 @@ import re as _re  # noqa: E402
 _RECORD = bool(_os.environ.get("I18N_RECORD"))
 _MISSING = set()
 
-# Field / table names and tokens that must stay in their original form.
+# Only brand / proper names stay in their original form (per request, field
+# names and filenames ARE translated now).
 NO_TRANSLATE = {
-    "num_ticket", "tipo_servicio", "tipo_vehiculo", "empresa", "sector", "placa",
-    "zona", "sub_zona", "micro_ruta", "organizacion", "peso_neto", "peso_ingreso",
-    "peso_salida", "fec_ingreso", "transactions", "retirados", "DATABASE_URL",
-    "EqualGreen", "DuckDB", "Streamlit", "GEOCYCLE", "CIRCULAREP",
+    "EqualGreen", "DuckDB", "Streamlit", "GEOCYCLE", "CIRCULAREP", "URVASEO",
+    "DATABASE_URL",
 }
 _HANGUL = _re.compile(r"[가-힣]")
-_DATA_MARKERS = (".xlsx", ".csv", ".kml", ".kmz", ".png", ".dwg", "src_",
-                 "scpd.duckdb")
+_DATA_MARKERS = ("src_",)   # only generated table prefixes; filenames translate
 
 _CACHE_PATH = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                             "i18n_cache.json")
@@ -298,6 +296,29 @@ def _install_patches():
         if orig:
             setattr(_DG, name, _wrap(orig))
 
+    # dataframe / table / data_editor: translate the column headers
+    def _df_cfg(data, k):
+        cols = getattr(data, "columns", None)
+        cols = list(cols) if cols is not None else []
+        if not cols:
+            return k
+        cfg = dict(k.get("column_config") or {})
+        for c in cols:
+            cur = cfg.get(c)
+            if cur is None:
+                cfg[c] = translate(str(c))
+            elif isinstance(cur, str):
+                cfg[c] = translate(cur)
+        k["column_config"] = cfg
+        return k
+
+    for name in ("dataframe", "table", "data_editor"):
+        orig = getattr(_DG, name, None)
+        if orig:
+            def _dgw(self, data=None, *a, _o=orig, **k):
+                return _o(self, data, *a, **_df_cfg(data, k))
+            setattr(_DG, name, _dgw)
+
     # tabs: translate the list of labels
     _tabs = getattr(_DG, "tabs", None)
     if _tabs:
@@ -335,6 +356,13 @@ def _install_patches():
                 labels = [translate(x) if isinstance(x, str) else x for x in labels]
             return _otabs(labels, *a, **k)
         st.tabs = _stabs
+
+    for name in ("dataframe", "table", "data_editor"):
+        orig = getattr(st, name, None)
+        if orig:
+            def _sdfw(data=None, *a, _o=orig, **k):
+                return _o(data, *a, **_df_cfg(data, k))
+            setattr(st, name, _sdfw)
 
 
 _install_patches()
