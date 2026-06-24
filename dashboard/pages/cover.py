@@ -7,7 +7,7 @@ for _p in (_here, os.path.dirname(_here), os.path.dirname(os.path.dirname(_here)
 import streamlit as st
 
 from style import inject_css, hamm_wordmark, eg_logo_html
-from i18n import t
+from i18n import t, tr
 
 inject_css()
 
@@ -32,13 +32,13 @@ st.markdown(
     <div style="text-align:center;padding:1.2rem 0 0.4rem 0;">
       <div style="font-family:'JetBrains Mono',monospace;color:#DC2828;
                   letter-spacing:.18em;font-weight:700;font-size:.8rem;">
-        """ + t("MUNICIPAL SOLID WASTE ANALYTICS") + """</div>
+        """ + tr(t("MUNICIPAL SOLID WASTE ANALYTICS")) + """</div>
       <h1 style="font-family:'Playfair Display',serif;font-weight:900;
-                 color:#141414;font-size:2.8rem;margin:.4rem 0 .2rem 0;
-                 letter-spacing:-.02em;line-height:1.08;">
-        Sistema de Control y Pesaje<br>de Desechos — Guayaquil</h1>
+                 color:#141414;font-size:2.6rem;margin:.4rem 0 .2rem 0;
+                 letter-spacing:-.02em;line-height:1.1;">
+        """ + tr("Solid-Waste Control & Weighing System") + """ — Guayaquil</h1>
       <div style="color:#5F5F5F;font-size:1.05rem;font-weight:500;">
-        Las Iguanas landfill · Consorcio URVASEO · CIRCULAREP · 2023–2025</div>
+        """ + tr("Las Iguanas landfill") + """ · Consorcio URVASEO · CIRCULAREP · 2023–2025</div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -65,4 +65,4 @@ with c3:
 st.divider()
 st.markdown(
     "<div style='text-align:center;color:#8a8a8a;font-size:.85rem;'>"
-    + t("cover.footer") + "</div>", unsafe_allow_html=True)
+    + tr(t("cover.footer")) + "</div>", unsafe_allow_html=True)

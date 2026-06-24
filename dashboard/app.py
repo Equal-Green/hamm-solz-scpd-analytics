@@ -20,7 +20,7 @@ import streamlit as st
 from db import get_db          # noqa: E402  (db.py fixes sys.path)
 from state import is_loaded, loaded_files
 from style import (inject_css, render_header, hamm_wordmark, eg_logo_html)
-from i18n import t, language_selector
+from i18n import t, tr, language_selector
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
 from pipeline.load import run_pipeline
@@ -100,28 +100,32 @@ with st.sidebar:
     )
 language_selector()
 
-cover = st.Page("pages/cover.py", title=t("page.cover"), icon="📘", default=True)
-home = st.Page("pages/00_home.py", title=t("page.exec"), icon="🏠")
-architecture = st.Page("pages/architecture.py", title=t("page.arch"), icon="🧩")
-overview = st.Page("pages/01_overview.py", title=t("page.overview"), icon="📈")
-services = st.Page("pages/02_service_types.py", title=t("page.services"), icon="🧾")
-operators = st.Page("pages/03_operators.py", title=t("page.operators"), icon="🚛")
-geocycle = st.Page("pages/04_geocycle.py", title=t("page.geocycle"), icon="♻️")
-geo = st.Page("pages/08_geo_routes.py", title=t("page.geo"), icon="🗺️")
-forecast = st.Page("pages/09_forecast.py", title=t("page.forecast"), icon="📉")
-efficiency = st.Page("pages/10_efficiency.py", title=t("page.efficiency"), icon="⚙️")
-integrity = st.Page("pages/11_integrity.py", title=t("page.integrity"), icon="🔐")
-diversion = st.Page("pages/12_diversion.py", title=t("page.diversion"), icon="🔄")
-ask = st.Page("pages/07_ask.py", title=t("page.ask"), icon="💬")
-quality = st.Page("pages/05_data_quality.py", title=t("page.quality"), icon="🔎")
-settings = st.Page("pages/06_settings.py", title=t("page.settings"), icon="⚙️")
+def P(path, title, icon, default=False):
+    return st.Page(path, title=tr(t(title)), icon=icon, default=default)
+
+
+cover = P("pages/cover.py", "page.cover", "📘", default=True)
+home = P("pages/00_home.py", "page.exec", "🏠")
+architecture = P("pages/architecture.py", "page.arch", "🧩")
+overview = P("pages/01_overview.py", "page.overview", "📈")
+services = P("pages/02_service_types.py", "page.services", "🧾")
+operators = P("pages/03_operators.py", "page.operators", "🚛")
+geocycle = P("pages/04_geocycle.py", "page.geocycle", "♻️")
+geo = P("pages/08_geo_routes.py", "page.geo", "🗺️")
+forecast = P("pages/09_forecast.py", "page.forecast", "📉")
+efficiency = P("pages/10_efficiency.py", "page.efficiency", "⚙️")
+integrity = P("pages/11_integrity.py", "page.integrity", "🔐")
+diversion = P("pages/12_diversion.py", "page.diversion", "🔄")
+ask = P("pages/07_ask.py", "page.ask", "💬")
+quality = P("pages/05_data_quality.py", "page.quality", "🔎")
+settings = P("pages/06_settings.py", "page.settings", "⚙️")
 
 nav = st.navigation({
-    t("nav.start"): [cover, home, architecture],
-    t("nav.story"): [overview, services, operators, geocycle, geo],
-    t("nav.analysis"): [forecast, efficiency, integrity, diversion],
-    t("nav.explore"): [ask],
-    t("nav.trust"): [quality],
-    t("nav.system"): [settings],
+    tr(t("nav.start")): [cover, home, architecture],
+    tr(t("nav.story")): [overview, services, operators, geocycle, geo],
+    tr(t("nav.analysis")): [forecast, efficiency, integrity, diversion],
+    tr(t("nav.explore")): [ask],
+    tr(t("nav.trust")): [quality],
+    tr(t("nav.system")): [settings],
 })
 nav.run()

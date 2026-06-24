@@ -152,11 +152,13 @@ def current_lang():
 
 
 def t(key):
-    lang = current_lang()
+    """Resolve a key to its ENGLISH source text. All translation happens in
+    translate() via Google Translate, so this only un-maps id-style keys
+    (e.g. 'page.overview' -> 'Overview'); plain English keys pass through."""
     entry = TR.get(key)
-    if not entry:
-        return key
-    return entry.get(lang) or entry.get(_DEFAULT) or key
+    if entry:
+        return entry.get(_DEFAULT) or key
+    return key
 
 
 # --- automatic translation layer --------------------------------------------
@@ -201,6 +203,12 @@ _NOTR = "⁠"  # invisible marker: "never translate this string"
 def notr(s):
     """Mark a (data) string so the auto-translator leaves it untouched."""
     return _NOTR + s if isinstance(s, str) else s
+
+
+def tr(s):
+    """Public alias for translate() — for surfaces Streamlit doesn't auto-patch
+    (st.Page titles, st.navigation group labels, text baked into HTML)."""
+    return translate(s)
 
 
 def _has_lower_ascii(s):
@@ -250,7 +258,7 @@ def translate(s):
     bucket = _CACHE.setdefault(lang, {})
     if s in bucket:
         return bucket[s]
-    # 2. Google Translate — the default engine (when online), then cache it
+    # 2. Google Translate — the single translation engine, then cache it
     if _GT is not None:
         try:
             out = _GT(source="en", target=lang).translate(s) or s
@@ -259,10 +267,6 @@ def translate(s):
             return out
         except Exception:  # noqa: BLE001
             pass
-    # 3. fallback: curated dictionary, else original English
-    entry = TR.get(s)
-    if entry:
-        return entry.get(lang) or entry.get(_DEFAULT) or s
     if _RECORD:
         _MISSING.add(s)
     return s
