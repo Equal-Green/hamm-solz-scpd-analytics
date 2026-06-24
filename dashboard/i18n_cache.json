@@ -357,7 +357,8 @@
 "🗺️ **3. CARTOGRAFÍA DEL CANTON** — 12 files": "🗺️**3. CARTOGRAFÍA DEL CANTON** — 12개 파일",
 "🗺️ Collection map — sub-zones & routes": "🗺️ 컬렉션 지도 — 하위 구역 및 경로",
 "🚛 **7. PLANO CON ZONAS Y SUBZONAS DE RECOLECCION** — 72 files": "🚛**7. PLANO CON ZONAS Y SUBZONAS DE RECOLECCION** — 72개 파일",
-"🧪 **1. CARACTERIZACION** — 9 files": "🧪**1. CARACTERIZACION** — 9개 파일"
+"🧪 **1. CARACTERIZACION** — 9 files": "🧪**1. CARACTERIZACION** — 9개 파일",
+"Municipal solid-waste analytics": "도시 고형 폐기물 분석"
 },
 "es": {
 "Tu informe no es un PDF estático ni una hoja de cálculo — es una pequeña **aplicación analítica autónoma**. Funciona por completo en una máquina, **sin servidor de base de datos, sin cuenta en la nube y sin suscripciones**. Dos tecnologías de código abierto lo hacen posible.": "Tu informe no es un PDF estático ni una hoja de cálculo — es una pequeña **aplicación analítica autónoma**. Funciona por completo en una máquina, **sin servidor de base de datos, sin cuenta en la nube y sin suscripciones**. Dos tecnologías de código abierto lo hacen posible.",
@@ -861,6 +862,7 @@
 "🗺️ **3. CARTOGRAFÍA DEL CANTON** — 12 files": "🗺️ **3. CARTOGRAFÍA DEL CANTON** — 12 archivos",
 "🗺️ Collection map — sub-zones & routes": "🗺️ Mapa de colección: subzonas y rutas",
 "🚛 **7. PLANO CON ZONAS Y SUBZONAS DE RECOLECCION** — 72 files": "🚛 **7. PLANO CON ZONAS Y SUBZONAS DE RECOLECCION** — 72 archivos",
-"🧪 **1. CARACTERIZACION** — 9 files": "🧪 **1. CARACTERIZACIÓN** — 9 archivos"
+"🧪 **1. CARACTERIZACION** — 9 files": "🧪 **1. CARACTERIZACIÓN** — 9 archivos",
+"Municipal solid-waste analytics": "Análisis de residuos sólidos municipales"
 }
 }

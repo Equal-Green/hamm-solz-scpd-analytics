@@ -31,8 +31,9 @@ st.markdown(
     """
     <div style="text-align:center;padding:1.2rem 0 0.4rem 0;">
       <div style="font-family:'JetBrains Mono',monospace;color:#DC2828;
-                  letter-spacing:.18em;font-weight:700;font-size:.8rem;">
-        """ + tr(t("MUNICIPAL SOLID WASTE ANALYTICS")) + """</div>
+                  letter-spacing:.18em;font-weight:700;font-size:.8rem;
+                  text-transform:uppercase;">
+        """ + tr("Municipal solid-waste analytics") + """</div>
       <h1 style="font-family:'Playfair Display',serif;font-weight:900;
                  color:#141414;font-size:2.6rem;margin:.4rem 0 .2rem 0;
                  letter-spacing:-.02em;line-height:1.1;">
