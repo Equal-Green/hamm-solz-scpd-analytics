@@ -272,6 +272,39 @@ def translate(s):
     return s
 
 
+def _translate_fig(fig):
+    """Translate the text inside a Plotly figure (title, axis titles, legend,
+    colorbar, annotations, trace names) — st.plotly_chart isn't text-patched."""
+    try:
+        lay = fig.layout
+        if lay.title and lay.title.text:
+            lay.title.text = translate(lay.title.text)
+        for ax in ("xaxis", "yaxis", "xaxis2", "yaxis2", "xaxis3", "yaxis3"):
+            a = getattr(lay, ax, None)
+            if a is not None and a.title and a.title.text:
+                a.title.text = translate(a.title.text)
+        try:
+            if lay.legend and lay.legend.title and lay.legend.title.text:
+                lay.legend.title.text = translate(lay.legend.title.text)
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            cb = lay.coloraxis.colorbar
+            if cb and cb.title and cb.title.text:
+                cb.title.text = translate(cb.title.text)
+        except Exception:  # noqa: BLE001
+            pass
+        for ann in (lay.annotations or []):
+            if getattr(ann, "text", None):
+                ann.text = translate(ann.text)
+        for trace in fig.data:
+            if getattr(trace, "name", None):
+                trace.name = translate(trace.name)
+    except Exception:  # noqa: BLE001 — never break rendering
+        pass
+    return fig
+
+
 def _install_patches():
     """Patch DeltaGenerator + st so display strings auto-translate. Idempotent."""
     from streamlit.delta_generator import DeltaGenerator as _DG
@@ -323,6 +356,14 @@ def _install_patches():
                 return _o(self, data, *a, **_df_cfg(data, k))
             setattr(_DG, name, _dgw)
 
+    # plotly_chart: translate the text baked into the figure object
+    _dgpc = getattr(_DG, "plotly_chart", None)
+    if _dgpc:
+        def _dgpcw(self, figure_or_data=None, *a, _o=_dgpc, **k):
+            return _o(self, _translate_fig(figure_or_data) if figure_or_data
+                      is not None else figure_or_data, *a, **k)
+        setattr(_DG, "plotly_chart", _dgpcw)
+
     # tabs: translate the list of labels
     _tabs = getattr(_DG, "tabs", None)
     if _tabs:
@@ -367,6 +408,13 @@ def _install_patches():
             def _sdfw(data=None, *a, _o=orig, **k):
                 return _o(data, *a, **_df_cfg(data, k))
             setattr(st, name, _sdfw)
+
+    _stpc = getattr(st, "plotly_chart", None)
+    if _stpc:
+        def _stpcw(figure_or_data=None, *a, _o=_stpc, **k):
+            return _o(_translate_fig(figure_or_data) if figure_or_data
+                      is not None else figure_or_data, *a, **k)
+        st.plotly_chart = _stpcw
 
 
 _install_patches()
