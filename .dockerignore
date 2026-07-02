@@ -1,0 +1,17 @@
+# Keep the image lean — but DO NOT ignore data/scpd.duckdb (the app needs it).
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/*.pyo
+.venv
+venv
+.env
+.env.*
+*.log
+.DS_Store
+.vscode
+.idea
+# Large raw source archives are never needed in the image (prebuilt DB is committed).
+data/raw
+*.zip
