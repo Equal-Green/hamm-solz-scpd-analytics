@@ -34,6 +34,37 @@ TR_PAGES = {
                              "ko": "적재 시간 (1회)"},
     "Query response": {"es": "Respuesta de consulta", "ko": "쿼리 응답"},
 
+    # --- compliance page (English-keyed section headers & tab labels) ---
+"Rollup by category": {"es": "Resumen por categoría",
+                           "ko": "범주별 집계"},
+        "Contribution to the score": {"es": "Aporte al puntaje",
+                                  "ko": "점수 기여도"},
+    "Weighted points earned vs outstanding": {
+        "es": "Puntos ponderados obtenidos vs pendientes",
+        "ko": "획득 가중 점수 대비 미이행"},
+    "Minimum content and evidence": {"es": "Contenido mínimo y evidencia",
+                                     "ko": "최소 내용 및 증빙"},
+    "Success indicators (Annex 2 §3)": {
+        "es": "Indicadores de éxito (Anexo 2 §3)",
+        "ko": "성과 지표 (부속서 2 §3)"},
+    "Implementation requirements (Annex 2 §2)": {
+        "es": "Requisitos de implementación (Anexo 2 §2)",
+        "ko": "이행 요건 (부속서 2 §2)"},
+    "Contract documents, in order of priority": {
+        "es": "Documentos del contrato, en orden de prioridad",
+        "ko": "계약 문서 (우선순위 순)"},
+    "📋 Deliverables (Annex 2)": {"es": "📋 Entregables (Anexo 2)",
+                                 "ko": "📋 산출물 (부속서 2)"},
+    "📦 Materials received (Annex 3)": {
+        "es": "📦 Materiales recibidos (Anexo 3)",
+        "ko": "📦 수령 자료 (부속서 3)"},
+    "✅ Indicators & implementation": {
+        "es": "✅ Indicadores e implementación", "ko": "✅ 지표 · 이행"},
+    "🚧 Scope guardrails": {"es": "🚧 Límites del alcance",
+                            "ko": "🚧 업무 범위 한계"},
+    "📄 Agreement terms": {"es": "📄 Términos del contrato",
+                          "ko": "📄 계약 조건"},
+
     # --- tab labels ---
     "📂 The archive": {"es": "📂 El archivo", "ko": "📂 아카이브"},
     "✅ Integrity & quality": {"es": "✅ Integridad y calidad",

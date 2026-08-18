@@ -15,3 +15,8 @@ venv
 # Large raw source archives are never needed in the image (prebuilt DB is committed).
 data/raw
 *.zip
+# Internal client working documents — not part of the running app.
+deliverables
+.preview
+.claude
+.devcontainer

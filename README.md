@@ -104,6 +104,8 @@ so `PESO_SALIDA > PESO_INGRESO` and net recovered = exit − entry.
 ```
 scpd-analytics/
 ├── config.py                 # ZIP_PATH, DUCKDB_PATH, file specs, column map
+├── compliance.py             # signed agreement model: deliverables, weights,
+│                             #   status, evidence, Annex 3 mapping, scoring
 ├── pipeline/
 │   ├── discover.py           # scan ZIP → file inventory
 │   ├── extract.py            # streaming ZIP scanner + SAX Excel parser
@@ -114,15 +116,46 @@ scpd-analytics/
 ├── dashboard/
 │   ├── app.py                # entry: pipeline UI, then grouped st.navigation
 │   ├── db.py / state.py / theme.py / style.py / ask_engine.py
+│   ├── seed_i18n_cache.py    # promote curated ES/KO into i18n_cache.json
 │   └── pages/                # Executive Summary, Overview, Service Types,
 │                             #   Operators, GEOCYCLE, Ask the Data,
-│                             #   Data Quality & Catalog, Settings
+│                             #   Data Quality & Catalog, Agreement &
+│                             #   Compliance, Settings
 └── data/                     # scpd.duckdb + raw/ (git-ignored)
 
 The sidebar uses a **nested/grouped navigation** (`st.navigation`):
 *Start here* (Executive Summary) · *The story* (Overview → Service Types →
 Operators → GEOCYCLE) · *Explore* (Ask the Data) · *Trust & data* (Data Quality
-& Catalog) · *System* (Settings).
+& Catalog) · *Agreement* (Agreement & Compliance) · *System* (Settings).
+
+### Agreement & Compliance
+
+Scores the signed Consultancy Service Agreement (THE HAMM SOLZ ↔ Carlos Arcos
+Pastor, Effective Date 04 June 2026, 90-day term) against what has actually been
+delivered. Two numbers, deliberately separate:
+
+- **Compliance to date** — weighted across the Annex 2 deliverables that are
+  ongoing or already due. This is the accountability figure, shown against how
+  much of the term has elapsed.
+- **Full-contract completion** — the same weighting across all six deliverables,
+  including those not yet due.
+
+**Annex 3 material coverage is computed, not declared** — it maps each requested
+material category to the source-archive folders actually received from Circular
+EP (`data/archive_inventory.json`). Everything else is *declared* status held in
+`compliance.py`: when a deliverable lands, set its `status` and append an
+`evidence` line. Items left `not_started` show as open gaps by design, and
+`verified: False` marks a status nobody has checked against real artifacts yet
+— the page counts those in a separate warning.
+
+Set `SCPD_COMPLIANCE_AUDIENCE=client` to suppress the internal maintenance
+warnings; the default (`internal`) shows them.
+
+Curated ES/KO wording for this page lives in `i18n.TR` / `i18n_pages.TR_PAGES`
+**and** in `dashboard/i18n_cache.json` — the cache is what `translate()` reads,
+so run `.venv/bin/python dashboard/seed_i18n_cache.py` (with the app stopped)
+after editing those strings. Machine translation is not trustworthy here: it
+rendered "score" as *partitura* and "guardrails" as *barandillas*.
 
 ### Ask the Data
 

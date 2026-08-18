@@ -106,6 +106,160 @@ TR = {
                       "ko": "THE HAMM SOLZ × EQUALGREEN"},
     "page.cover": {"en": "Cover", "es": "Portada", "ko": "표지"},
     "page.arch": {"en": "How it works", "es": "Cómo funciona", "ko": "작동 원리"},
+    "page.compliance": {"en": "Agreement & Compliance",
+                        "es": "Contrato y cumplimiento", "ko": "계약 · 이행률"},
+    "nav.agreement": {"en": "Agreement", "es": "Contrato", "ko": "계약"},
+    # --- compliance page ---
+    "comp.subtitle": {
+        "en": "The signed consultancy agreement, scored against what has "
+              "actually been delivered.",
+        "es": "El contrato de consultoría firmado, evaluado frente a lo "
+              "realmente entregado.",
+        "ko": "체결된 컨설팅 계약과 실제 이행 실적 대비 평가."},
+    "comp.contract_day": {"en": "Contract day", "es": "Día del contrato",
+                          "ko": "계약 경과일"},
+    "comp.days_remaining": {"en": "Days remaining", "es": "Días restantes",
+                            "ko": "잔여 일수"},
+    "comp.term_ends": {"en": "Term ends", "es": "Fin del plazo",
+                       "ko": "계약 종료일"},
+    "comp.contract_amount": {"en": "Contract amount", "es": "Monto del contrato",
+                             "ko": "계약 금액"},
+    "comp.gauge_title": {"en": "Compliance against obligations due to date",
+                         "es": "Cumplimiento de las obligaciones vencidas",
+                         "ko": "현재까지 도래한 의무 이행률"},
+    "comp.gauge_caption": {
+        "en": "Weighted across the Annex 2 deliverables that are ongoing or "
+              "already due. The black needle marks how much of the 90-day term "
+              "has elapsed — delivery should keep pace with it.",
+        "es": "Ponderado sobre los entregables del Anexo 2 en curso o ya "
+              "vencidos. La aguja negra marca el avance del plazo de 90 días; "
+              "la entrega debería mantener ese ritmo.",
+        "ko": "부속서 2의 진행 중이거나 이미 도래한 산출물에 대한 가중 평균입니다. "
+              "검은 지침은 90일 기간의 경과율을 나타내며, 이행이 이를 따라가야 합니다."},
+    "comp.overall": {"en": "Full-contract completion",
+                     "es": "Avance total del contrato", "ko": "전체 계약 이행률"},
+    "comp.term_elapsed": {"en": "Term elapsed", "es": "Plazo transcurrido",
+                          "ko": "기간 경과율"},
+    "comp.annex3": {"en": "Annex 3 material coverage",
+                    "es": "Cobertura de materiales (Anexo 3)",
+                    "ko": "부속서 3 자료 확보율"},
+    "comp.reports_sent": {"en": "Bi-weekly reports logged",
+                          "es": "Informes bisemanales registrados",
+                          "ko": "격주 보고서 기록"},
+    "comp.at_risk": {
+        "en": "obligation(s) due and not fully met — each is either overdue or "
+              "ongoing without complete evidence on file:",
+        "es": "obligación(es) vencida(s) y no cumplida(s) por completo: cada "
+              "una está atrasada o en curso sin evidencia completa archivada:",
+        "ko": "건의 의무가 도래했으나 완전히 이행되지 않았습니다 — 각 항목은 기한이 "
+              "지났거나 완전한 증빙 없이 진행 중입니다:"},
+    "comp.on_track": {
+        "en": "Every obligation due as of today is fully met with evidence on "
+              "file.",
+        "es": "Todas las obligaciones vencidas a la fecha están cumplidas con "
+              "evidencia archivada.",
+        "ko": "현재까지 도래한 모든 의무가 증빙과 함께 완전히 이행되었습니다."},
+    "comp.unverified": {
+        "en": "deliverable(s) carry a status that has not been checked against "
+              "real artifacts yet. Record the actual status and an evidence "
+              "pointer in the contract model so this score is defensible.",
+        "es": "entregable(s) tienen un estado que aún no se ha verificado "
+              "contra artefactos reales. Registre el estado real y una "
+              "referencia de evidencia en el modelo del contrato para que esta "
+              "puntuación sea defendible.",
+        "ko": "건의 산출물 상태가 실제 결과물과 대조 검증되지 않았습니다. 이 점수가 "
+              "방어 가능하도록 계약 모델에 실제 상태와 증빙 위치를 기록하십시오."},
+    "comp.del_intro": {
+        "en": "The six key deliverables from **Annex 2 §1**. Weights reflect "
+              "contractual significance; the score counts an ongoing item at "
+              "full value only when its evidence is complete.",
+        "es": "Los seis entregables clave del **Anexo 2 §1**. Los pesos "
+              "reflejan su relevancia contractual; un ítem en curso puntúa al "
+              "100 % solo cuando su evidencia está completa.",
+        "ko": "**부속서 2 §1**의 핵심 산출물 6건입니다. 가중치는 계약상 중요도를 "
+              "반영하며, 진행 항목은 증빙이 완비된 경우에만 만점으로 계산됩니다."},
+    "comp.no_evidence": {
+        "en": "_No evidence recorded yet._",
+        "es": "_Aún no hay evidencia registrada._",
+        "ko": "_기록된 증빙이 없습니다._"},
+    "comp.mat_intro": {
+        "en": "**Annex 3** lists the materials THS may request through Circular "
+              "EP. Coverage below is computed from the source archive actually "
+              "received — not from a declaration.",
+        "es": "El **Anexo 3** enumera los materiales que THS puede solicitar a "
+              "través de Circular EP. La cobertura se calcula a partir del "
+              "archivo realmente recibido, no de una declaración.",
+        "ko": "**부속서 3**은 THS가 Circular EP를 통해 요청할 수 있는 자료 목록입니다. "
+              "아래 확보율은 선언이 아니라 실제 수령한 원본 아카이브에서 산출됩니다."},
+    "comp.items_received": {"en": "Items fully answered",
+                            "es": "Ítems totalmente cubiertos",
+                            "ko": "완전 충족 항목"},
+    "comp.items_partial": {"en": "Partially answered",
+                           "es": "Parcialmente cubiertos", "ko": "부분 충족"},
+    "comp.items_none": {"en": "Not delivered", "es": "No entregados",
+                        "ko": "미수령"},
+    "comp.items_caption": {
+        "en": "Coverage is a reading of the delivered archive, confirmed by the "
+              "Consultant in the tracking matrix. Partial items count as half "
+              "toward the headline figure. Every category holds some material, "
+              "so a category-level rollup overstates coverage — the item-level "
+              "reading is the one to act on.",
+        "es": "La cobertura es una lectura del archivo entregado, confirmada "
+              "por el Consultor en la matriz de seguimiento. Los ítems "
+              "parciales cuentan como medio en la cifra principal. Todas las "
+              "categorías tienen algún material, por lo que un resumen por "
+              "categoría sobreestima la cobertura; la lectura por ítem es la "
+              "que debe usarse.",
+        "ko": "확보율은 수령한 아카이브를 판독한 결과이며, 컨설턴트가 추적 "
+              "매트릭스에서 확인합니다. 부분 항목은 대표 수치에서 0.5로 계산됩니다. "
+              "모든 범주에 일부 자료가 있어 범주 단위 집계는 확보율을 과대 "
+              "평가하므로, 항목 단위 판독을 기준으로 삼아야 합니다."},
+    "comp.files": {"en": "files", "es": "archivos", "ko": "개 파일"},
+    "comp.topic_folders": {"en": "topic folders", "es": "carpetas temáticas",
+                           "ko": "개 주제 폴더"},
+    "comp.mat_caption": {
+        "en": "received from Circular EP and catalogued. Annex 3 coverage means "
+              "a category has materials on hand — it does not warrant their "
+              "completeness or quality (Annex 1 §4).",
+        "es": "recibidos de Circular EP y catalogados. La cobertura del Anexo 3 "
+              "indica que existen materiales; no garantiza su integridad ni "
+              "calidad (Anexo 1 §4).",
+        "ko": "Circular EP로부터 수령·목록화했습니다. 부속서 3 확보율은 자료 보유를 "
+              "의미하며 완전성이나 품질을 보증하지 않습니다 (부속서 1 §4)."},
+    "comp.scope_intro": {
+        "en": "**Clause 3 and Annex 1 §4** put the following outside scope. "
+              "Compliance here means these were *not* performed without a "
+              "written THS request, a written estimate, and written approval.",
+        "es": "La **Cláusula 3 y el Anexo 1 §4** excluyen lo siguiente del "
+              "alcance. Cumplir significa *no* haberlo ejecutado sin "
+              "solicitud, estimación y aprobación escritas de THS.",
+        "ko": "**제3조 및 부속서 1 §4**는 다음을 범위에서 제외합니다. 이행이란 THS의 "
+              "서면 요청·견적·승인 없이 해당 업무를 수행하지 *않았음*을 뜻합니다."},
+    "comp.scope_note": {
+        "en": "Annex 1 §5: where Circular EP does not possess, collect, or "
+              "disclose material within the 90-day term, that is not "
+              "non-performance by the Consultant provided reasonable efforts "
+              "and follow-up are documented. Documented follow-up is therefore "
+              "the protection — which is what the tracking matrix and "
+              "bi-weekly reports exist to prove.",
+        "es": "Anexo 1 §5: si Circular EP no posee, recopila ni divulga "
+              "material dentro de los 90 días, no constituye incumplimiento "
+              "del Consultor siempre que se documenten esfuerzos razonables y "
+              "seguimiento. El seguimiento documentado es la protección: para "
+              "eso existen la matriz de seguimiento y los informes bisemanales.",
+        "ko": "부속서 1 §5: Circular EP가 90일 내에 자료를 보유·수집·제공하지 않는 "
+              "경우, 합리적 노력과 후속조치가 문서화되어 있다면 컨설턴트의 불이행이 "
+              "아닙니다. 따라서 문서화된 후속조치가 방어 근거이며, 추적 매트릭스와 "
+              "격주 보고서가 이를 입증합니다."},
+    "comp.terms_note": {
+        "en": "Annex 4 is a Spanish summary provided for local coordination "
+              "convenience only — the English Agreement and Annexes prevail. "
+              "Source of truth, signed:",
+        "es": "El Anexo 4 es un resumen en español solo para conveniencia de "
+              "coordinación local; prevalecen el Acuerdo y los Anexos en "
+              "inglés. Fuente de verdad, firmada:",
+        "ko": "부속서 4는 현지 조율 편의를 위한 스페인어 요약이며, 영문 계약서와 "
+              "부속서가 우선합니다. 서명된 원본 근거:"},
     "nav.about": {"en": "About this report", "es": "Sobre este informe",
                   "ko": "보고서 정보"},
     # forecast page

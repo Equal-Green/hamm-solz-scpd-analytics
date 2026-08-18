@@ -118,6 +118,7 @@ integrity = P("pages/11_integrity.py", "page.integrity", "🔐")
 diversion = P("pages/12_diversion.py", "page.diversion", "🔄")
 ask = P("pages/07_ask.py", "page.ask", "💬")
 quality = P("pages/05_data_quality.py", "page.quality", "🔎")
+compliance = P("pages/13_compliance.py", "page.compliance", "📜")
 settings = P("pages/06_settings.py", "page.settings", "⚙️")
 
 nav = st.navigation({
@@ -126,6 +127,7 @@ nav = st.navigation({
     tr(t("nav.analysis")): [forecast, efficiency, integrity, diversion],
     tr(t("nav.explore")): [ask],
     tr(t("nav.trust")): [quality],
+    tr(t("nav.agreement")): [compliance],
     tr(t("nav.system")): [settings],
 })
 nav.run()
