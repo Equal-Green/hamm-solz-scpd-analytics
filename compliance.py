@@ -50,6 +50,21 @@ def is_internal():
     return AUDIENCE != "client"
 
 
+# The Agreement & Compliance page is OFF by default, so the deployed app never
+# exposes it unless someone deliberately turns it on. The page and this model
+# stay in the codebase either way. Enable with:
+#
+#     SCPD_SHOW_COMPLIANCE=1 .venv/bin/streamlit run dashboard/app.py
+#
+# Streamlit routes only the pages handed to st.navigation, so leaving it out
+# removes the sidebar entry AND the /compliance URL.
+_TRUTHY = {"1", "true", "yes", "on"}
+
+
+def page_enabled():
+    return os.environ.get("SCPD_SHOW_COMPLIANCE", "").strip().lower() in _TRUTHY
+
+
 # --- Contract calendar -------------------------------------------------------
 def date_for_day(day):
     """Calendar date for contract Day N (Clause 2: Day 1 = Effective Date)."""

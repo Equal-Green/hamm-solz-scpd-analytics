@@ -24,6 +24,7 @@ from i18n import t, tr, language_selector
 
 from config import FILES, TOTAL_EXPECTED_ROWS, ZIP_PATH
 from pipeline.load import run_pipeline
+import compliance as compliance_model   # noqa: E402  (repo root is on sys.path)
 
 st.set_page_config(page_title="SCPD Analytics — Guayaquil",
                    page_icon="🗑️", layout="wide")
@@ -118,16 +119,26 @@ integrity = P("pages/11_integrity.py", "page.integrity", "🔐")
 diversion = P("pages/12_diversion.py", "page.diversion", "🔄")
 ask = P("pages/07_ask.py", "page.ask", "💬")
 quality = P("pages/05_data_quality.py", "page.quality", "🔎")
-compliance = P("pages/13_compliance.py", "page.compliance", "📜")
 settings = P("pages/06_settings.py", "page.settings", "⚙️")
 
-nav = st.navigation({
+groups = {
     tr(t("nav.start")): [cover, home, architecture],
     tr(t("nav.story")): [overview, services, operators, geocycle, geo],
     tr(t("nav.analysis")): [forecast, efficiency, integrity, diversion],
     tr(t("nav.explore")): [ask],
     tr(t("nav.trust")): [quality],
-    tr(t("nav.agreement")): [compliance],
-    tr(t("nav.system")): [settings],
-})
+}
+
+# Agreement & Compliance is internal and off by default — the deployed report
+# does not carry it. Set SCPD_SHOW_COMPLIANCE=1 to bring it back. st.navigation
+# routes only the pages it is given, so leaving the page out also makes its URL
+# unreachable, not merely hidden from the sidebar.
+if compliance_model.page_enabled():
+    groups[tr(t("nav.agreement"))] = [
+        P("pages/13_compliance.py", "page.compliance", "📜")
+    ]
+
+groups[tr(t("nav.system"))] = [settings]
+
+nav = st.navigation(groups)
 nav.run()

@@ -3,6 +3,13 @@
 Reads the contract model in compliance.py and the received-archive inventory,
 then reports two honest numbers: compliance against what is owed *today*, and
 completion of the full 90-day deliverable set.
+
+INTERNAL. This page is off unless SCPD_SHOW_COMPLIANCE is set. app.py leaves it
+out of st.navigation when disabled, which normally makes it unroutable — but
+Streamlit falls back to auto-discovering everything in pages/ under some
+invocations (an absolute entrypoint path, for one), and that fallback ignores
+st.navigation entirely. The guard below is the one that actually holds, so the
+page cannot render just because it was reached by a route we did not register.
 """
 import os, sys
 _here = os.path.dirname(os.path.abspath(__file__))
@@ -16,10 +23,14 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+import compliance as C
+
+if not C.page_enabled():
+    st.stop()
+
 from style import inject_css, render_header
 from theme import COLORS, apply_layout
 from i18n import t, tr, notr
-import compliance as C
 from pipeline.archive import load_inventory
 from config import TOTAL_EXPECTED_ROWS
 
