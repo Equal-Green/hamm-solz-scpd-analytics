@@ -7,14 +7,18 @@ themselves when the ZIP isn't present.
 
 ## One-time setup
 
-> **Where this app actually runs: Streamlit Community Cloud.**
-> The repo's only deploy webhook is `share.streamlit.io`. `railway.json` and the
-> `Dockerfile` are present and work, but **nothing is connected to Railway** — a
-> push does not deploy there. Wire Railway up before relying on it.
+> **Production runs on Railway:**
+> `https://hamm-solz-scpd-analytics-production.up.railway.app`
+> It deploys from `main` via the Railway GitHub App and the `Dockerfile`.
 >
-> The repo must stay **public** for Streamlit Community Cloud to pull it on a
-> free account. Making it private silently stops updates: the webhook still
-> returns 200, but the app keeps serving the last build it could read.
+> A Railway connection does NOT appear under the repo's webhooks
+> (`/repos/:owner/:repo/hooks`) — GitHub Apps use their own delivery channel, so
+> that endpoint listing only `share.streamlit.io` is not evidence that Railway
+> is unwired. Check the Railway dashboard.
+>
+> Keep the repo **public**: making it private stopped deploys from reaching
+> Railway, and the app silently kept serving the last build it could read while
+> pushes appeared to succeed.
 
 1. Go to **https://share.streamlit.io** and sign in with the GitHub account
    that has access to the `Equal-Green` org (**grant-flaming-owl**).
