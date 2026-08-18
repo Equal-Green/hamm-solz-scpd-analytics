@@ -39,6 +39,14 @@ ENGLISH_KEYED = [
     "✅ Indicators & implementation",
     "🚧 Scope guardrails",
     "Rollup by category",
+    "Hard dates",
+    "Choe in Ecuador",
+    "Last report due",
+    "Term ends",
+    "🚨 Blockers",
+    "Mr. Choe (THS) in Ecuador",
+    "Final bi-weekly progress report due",
+    "Term ends -- Final Handover Package due",
     "📄 Agreement terms",
 ]
 

@@ -408,8 +408,10 @@ def indicator_score(items):
 ANNEX3_ITEMS = [
     # A. Waste characteristics and waste generation data
     ("A1", "A", "Existing waste characterization study results for Las Iguanas, "
-     "Guayaquil, and Puná Island", [1], "received",
-     "Characterization studies 2012–2026 plus Análisis_Las_Iguanas.pdf."),
+     "Guayaquil, and Puná Island", [1], "partial",
+     "Studies for 2012, 2016, 2017, 2022 and 2023 are complete. The 2025-2026 "
+     "study is delivered but unfinished: sampling stops 30 Apr 2026 and no "
+     "update has been received. Downgraded from 'received' on that basis."),
     ("A2", "A", "Historical municipal solid waste generation data for Guayaquil "
      "and Puná Island, preferably the most recent five (5) years or more",
      [4, 9], "partial",
@@ -579,3 +581,175 @@ def annex3_item_summary(inventory):
     # fully answered.
     out["weighted"] = (out["received"] + 0.5 * out["partial"]) / len(rows)
     return out
+
+
+# --- Blockers and hard dates -------------------------------------------------
+# The 2025-2026 waste characterization study. Circular EP delivered the
+# workbook inside the source archive, but its sampling stops partway through
+# 2026 and no update has been received since. Read live rather than asserted,
+# so the blocker clears itself the moment newer sampling data is loaded.
+CHARACTERIZATION_TABLE = "src_caracterizaci_n_2025_2026_clasificacion"
+CHARACTERIZATION_LABEL = "Caracterizacion 2025-2026.xlsx"
+
+# Excel serial dates count from this epoch.
+_EXCEL_EPOCH = date(1899, 12, 30)
+
+
+def _excel_date(value):
+    try:
+        f = float(value)
+    except (TypeError, ValueError):
+        return None
+    return _EXCEL_EPOCH + timedelta(days=int(f)) if 40000 < f < 50000 else None
+
+
+def characterization_status(con, today=None):
+    """Coverage window of the 2025-2026 characterization study.
+
+    Returns None when the table is absent (the dashboard then simply omits the
+    blocker rather than asserting something it cannot see).
+    """
+    today = today or date.today()
+    try:
+        rows = con.execute(
+            f'SELECT * FROM "{CHARACTERIZATION_TABLE}"').fetchall()
+    except Exception:  # noqa: BLE001 — table missing or DB unavailable
+        return None
+
+    dates = []
+    for row in rows:
+        if str(row[0]).strip().upper().startswith("FECHA"):
+            dates.extend(d for d in (_excel_date(v) for v in row[1:]) if d)
+    if not dates:
+        return None
+
+    latest = max(dates)
+    return {
+        "earliest": min(dates),
+        "latest": latest,
+        "samples": len(dates),
+        "gap_days": (today - latest).days,
+        # The study is titled 2025-2026; sampling that stops before the second
+        # half of 2026 means the series is incomplete on its own terms.
+        "incomplete": latest < date(2026, 7, 1),
+    }
+
+
+# Hard dates that constrain the remaining term. `window` is used where the
+# exact day is not yet confirmed -- never guess a date onto the record.
+KEY_DATES = [
+    {
+        "key": "choe_visit",
+        "label": "Mr. Choe (THS) in Ecuador",
+        "short": "Choe in Ecuador",
+        "window": (date(2026, 8, 24), date(2026, 8, 30)),
+        "confirmed": False,
+        "urgent": True,
+        "note": "Exact date to be confirmed. Everything intended to be shown "
+                "or handed over in person has to be defensible before he "
+                "lands -- this pulls the whole schedule forward off Day 90.",
+    },
+    {
+        "key": "day84",
+        "label": "Final bi-weekly progress report due",
+        "short": "Last report due",
+        "window": (date_for_day(84), date_for_day(84)),
+        "confirmed": True,
+        "urgent": False,
+        "note": "The last reporting date inside the term, and the only "
+                "remaining chance to deliver deliverable 4 on cadence.",
+    },
+    {
+        "key": "day90",
+        "label": "Term ends -- Final Handover Package due",
+        "short": "Term ends",
+        "window": (END_DATE, END_DATE),
+        "confirmed": True,
+        "urgent": False,
+        "note": "Contract term expires. Deliverable 6 is due on this date.",
+    },
+]
+
+
+def key_dates(today=None):
+    """Key dates with days-remaining, soonest first."""
+    today = today or date.today()
+    out = []
+    for d in KEY_DATES:
+        start, end = d["window"]
+        out.append({**d, "start": start, "end": end,
+                    "days_away": (start - today).days,
+                    "passed": end < today})
+    return sorted(out, key=lambda x: x["start"])
+
+
+def blockers(con=None, today=None):
+    """Active blockers, most severe first.
+
+    Severity: critical blocks a contractual deliverable; high threatens one.
+    """
+    today = today or date.today()
+    out = []
+
+    cs = characterization_status(con, today) if con is not None else None
+    if cs and cs["incomplete"]:
+        out.append({
+            "id": "caracterizacion-2026",
+            "severity": "critical",
+            "title": "2026 characterization study — no update from Circular EP",
+            "summary": (
+                f"Sampling in {CHARACTERIZATION_LABEL} stops at "
+                f"{cs['latest']:%d %b %Y} — {cs['gap_days']} days ago. The "
+                f"study is titled 2025-2026 but carries no sampling after that "
+                f"date, and nothing further has been received since the source "
+                f"archive was delivered on 16 June 2026."
+            ),
+            "evidence": (
+                f"{cs['samples']} sampling dates present, "
+                f"{cs['earliest']:%d %b %Y} to {cs['latest']:%d %b %Y}. "
+                f"No records for May, June, July or August 2026."
+            ),
+            "impact": (
+                "Annex 3 item A1 cannot be treated as fully answered. Waste "
+                "composition is the calibration input for any diversion or "
+                "recovery analysis, so the 2026 position rests on a series "
+                "that ends in April."
+            ),
+            "action": (
+                "Request the outstanding 2026 sampling and the study's current "
+                "status in writing, in the same letter that covers the eight "
+                "undelivered Annex 3 items. If Circular EP cannot supply it "
+                "within the term, obtain that in writing — under Annex 1 §5 a "
+                "documented refusal or delay is not Consultant "
+                "non-performance."
+            ),
+            "owner": "Consultant → Circular EP",
+        })
+
+    if not BIWEEKLY_LOG or not any(BIWEEKLY_LOG.values()):
+        sent, due = biweekly_progress(today)
+        out.append({
+            "id": "reporting-cadence",
+            "severity": "high",
+            "title": "No bi-weekly progress report has been delivered",
+            "summary": (
+                f"{sent} of {due} reports due to date are logged as sent. "
+                f"Deliverable 4 carries 20% of the contract weight and scores "
+                f"zero until reports are actually delivered."
+            ),
+            "evidence": "BIWEEKLY_LOG carries no send dates.",
+            "impact": (
+                "Documented follow-up is what Annex 1 §5 relies on. Its "
+                "absence, not the state of the data, is the live contractual "
+                "exposure."
+            ),
+            "action": (
+                f"Send the consolidated retrospective now, and deliver the "
+                f"Day-84 report on {date_for_day(84):%d %b %Y} on time — the "
+                f"last cadence point inside the term."
+            ),
+            "owner": "Consultant → THS",
+        })
+
+    order = {"critical": 0, "high": 1}
+    return sorted(out, key=lambda b: order.get(b["severity"], 9))

@@ -31,6 +31,7 @@ if not C.page_enabled():
 from style import inject_css, render_header
 from theme import COLORS, apply_layout
 from i18n import t, tr, notr
+from db import get_db
 from pipeline.archive import load_inventory
 from config import TOTAL_EXPECTED_ROWS
 
@@ -39,6 +40,51 @@ render_header(t("page.compliance"), t("comp.subtitle"), eyebrow=t("eyebrow.brand
 
 TODAY = date.today()
 s = C.score(TODAY)
+
+try:
+    _con = get_db()
+except Exception:  # noqa: BLE001 — blockers must never take the page down
+    _con = None
+BLOCKERS = C.blockers(_con, TODAY)
+DATES = C.key_dates(TODAY)
+_SEV = {"critical": ("\U0001F534", "critical"), "high": ("\U0001F7E0", "high")}
+
+# --- Urgent banner: blockers and hard dates, above everything else ----------
+if BLOCKERS or any(d["urgent"] and not d["passed"] for d in DATES):
+    st.error(notr(
+        f"**{tr(t('comp.deadline_notice'))}** "
+        f"{tr(t('comp.day_of'))} {s['day']}/{C.TERM_DAYS} \u00b7 "
+        f"{s['days_remaining']} {tr(t('comp.days_left'))} \u00b7 "
+        f"{C.END_DATE:%d %b %Y}"))
+
+    cols = st.columns(len(DATES))
+    for col, dt in zip(cols, DATES):
+        if dt["start"] == dt["end"]:
+            when = f"{dt['start']:%d %b}"
+        else:
+            when = f"{dt['start']:%d}\u2013{dt['end']:%d %b}"
+        mark = "\u2757 " if dt["urgent"] else ""
+        tail = "" if dt["confirmed"] else f" \u00b7 {tr(t('comp.tbc'))}"
+        col.metric(notr(f"{mark}{tr(dt['short'])}"),
+                   notr(when),
+                   delta=notr(f"{dt['days_away']} {tr(t('comp.days_away'))}{tail}"),
+                   delta_color="inverse", help=dt["note"])
+
+    for b in BLOCKERS:
+        icon, sev = _SEV.get(b["severity"], ("\u26A0\uFE0F", b["severity"]))
+        with st.container(border=True):
+            st.markdown(notr(
+                f"### {icon} {tr(t('comp.blocker'))} \u2014 {sev.upper()}"))
+            st.markdown(notr(f"**{b['title']}**"))
+            st.markdown(notr(b["summary"]))
+            c1, c2 = st.columns(2)
+            c1.markdown(notr(f"**{tr(t('comp.blk_evidence'))}**  \n{b['evidence']}"))
+            c2.markdown(notr(f"**{tr(t('comp.blk_impact'))}**  \n{b['impact']}"))
+            st.warning(notr(
+                f"**{tr(t('comp.blk_action'))}** {b['action']}  \n"
+                f"*{tr(t('comp.blk_owner'))}: {b['owner']}*"))
+
+    st.divider()
 
 _BAND = {"good": COLORS["success"], "warn": COLORS["amber"],
          "bad": COLORS["danger"]}
@@ -130,7 +176,8 @@ if C.is_internal() and s["unverified"]:
 st.divider()
 
 # --- Detail tabs -------------------------------------------------------------
-tab_del, tab_mat, tab_ind, tab_scope, tab_terms = st.tabs([
+tab_blk, tab_del, tab_mat, tab_ind, tab_scope, tab_terms = st.tabs([
+    t("🚨 Blockers"),
     t("📋 Deliverables (Annex 2)"),
     t("📦 Materials received (Annex 3)"),
     t("✅ Indicators & implementation"),
@@ -140,6 +187,32 @@ tab_del, tab_mat, tab_ind, tab_scope, tab_terms = st.tabs([
 
 _LABEL = {"complete": "✅ Complete", "in_progress": "🟡 In progress",
           "not_started": "🔴 Not started"}
+
+with tab_blk:
+    if not BLOCKERS:
+        st.success(t("comp.no_blockers"))
+    else:
+        st.markdown(t("comp.blk_intro"))
+    for b in BLOCKERS:
+        icon, sev = _SEV.get(b["severity"], ("⚠️", b["severity"]))
+        with st.expander(f"{icon}  {b['title']}", expanded=True):
+            st.markdown(notr(b["summary"]))
+            st.markdown(notr(f"**{tr(t('comp.blk_evidence'))}** {b['evidence']}"))
+            st.markdown(notr(f"**{tr(t('comp.blk_impact'))}** {b['impact']}"))
+            st.markdown(notr(f"**{tr(t('comp.blk_action'))}** {b['action']}"))
+            st.caption(notr(f"{tr(t('comp.blk_owner'))}: {b['owner']}"))
+
+    st.markdown(notr("#### " + tr(t("Hard dates"))))
+    st.dataframe(pd.DataFrame([
+        {"": "❗" if d["urgent"] else "",
+         "Date": (f"{d['start']:%d %b %Y}" if d["start"] == d["end"]
+                  else f"{d['start']:%d}–{d['end']:%d %b %Y}"),
+         "Confirmed": "Yes" if d["confirmed"] else "To confirm",
+         "Days away": d["days_away"],
+         "Milestone": d["label"],
+         "Note": d["note"]}
+        for d in DATES
+    ]), use_container_width=True, hide_index=True)
 
 with tab_del:
     st.markdown(t("comp.del_intro"))

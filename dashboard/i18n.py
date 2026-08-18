@@ -191,6 +191,53 @@ TR = {
               "archivo realmente recibido, no de una declaración.",
         "ko": "**부속서 3**은 THS가 Circular EP를 통해 요청할 수 있는 자료 목록입니다. "
               "아래 확보율은 선언이 아니라 실제 수령한 원본 아카이브에서 산출됩니다."},
+    "comp.deadline_notice": {
+        "en": "CLOSING ON THE DEADLINE.",
+        "es": "PLAZO A PUNTO DE VENCER.",
+        "ko": "마감 임박."},
+    "comp.day_of": {"en": "Day", "es": "Día", "ko": "경과일"},
+    "comp.days_left": {"en": "days left", "es": "días restantes",
+                       "ko": "일 남음"},
+    "comp.days_away": {"en": "days away", "es": "días", "ko": "일 후"},
+    "comp.tbc": {"en": "date to confirm", "es": "fecha por confirmar",
+                 "ko": "날짜 미확정"},
+    "comp.blocker": {"en": "BLOCKER", "es": "BLOQUEO", "ko": "차단 요인"},
+    "comp.blk_evidence": {"en": "Evidence", "es": "Evidencia", "ko": "증빙"},
+    "comp.blk_impact": {"en": "Impact", "es": "Impacto", "ko": "영향"},
+    "comp.blk_action": {"en": "Action:", "es": "Acción:", "ko": "조치:"},
+    "comp.blk_owner": {"en": "Owner", "es": "Responsable", "ko": "담당"},
+    "comp.blk_intro": {
+        "en": "Open blockers, most severe first. A blocker is something "
+              "outside our own control that is holding a contractual "
+              "deliverable short — each one names the evidence behind it, what "
+              "it costs, and the action that clears it.",
+        "es": "Bloqueos abiertos, del más grave al menos grave. Un bloqueo es "
+              "algo fuera de nuestro control que impide completar un "
+              "entregable contractual; cada uno indica su evidencia, su costo "
+              "y la acción que lo resuelve.",
+        "ko": "미해결 차단 요인을 심각도 순으로 정리했습니다. 차단 요인은 계약상 "
+              "산출물의 완성을 막는 통제 밖 사안이며, 각 항목에 증빙·영향·해소 "
+              "조치를 함께 기재했습니다."},
+    "comp.no_blockers": {
+        "en": "No open blockers. Every outstanding item is within our own "
+              "control to complete.",
+        "es": "No hay bloqueos abiertos. Todo lo pendiente está dentro de "
+              "nuestro control.",
+        "ko": "미해결 차단 요인이 없습니다. 남은 항목은 모두 자체적으로 완료할 수 "
+              "있습니다."},
+    "Mr. Choe (THS) in Ecuador": {
+        "es": "Sr. Choe (THS) en Ecuador", "ko": "최 대표(THS) 에콰도르 방문"},
+    "Final bi-weekly progress report due": {
+        "es": "Vence el último informe bisemanal",
+        "ko": "마지막 격주 보고서 마감"},
+    "Term ends -- Final Handover Package due": {
+        "es": "Fin del plazo — vence el paquete de entrega final",
+        "ko": "계약 종료 — 최종 인계 패키지 마감"},
+    "Choe in Ecuador": {"es": "Choe en Ecuador", "ko": "최 대표 에콰도르"},
+    "Last report due": {"es": "Último informe", "ko": "마지막 보고서"},
+    "Term ends": {"es": "Fin del plazo", "ko": "계약 종료"},
+    "Hard dates": {"es": "Fechas firmes", "ko": "확정 일정"},
+    "🚨 Blockers": {"es": "🚨 Bloqueos", "ko": "🚨 차단 요인"},
     "comp.items_received": {"en": "Items fully answered",
                             "es": "Ítems totalmente cubiertos",
                             "ko": "완전 충족 항목"},
