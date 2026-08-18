@@ -7,6 +7,15 @@ themselves when the ZIP isn't present.
 
 ## One-time setup
 
+> **Where this app actually runs: Streamlit Community Cloud.**
+> The repo's only deploy webhook is `share.streamlit.io`. `railway.json` and the
+> `Dockerfile` are present and work, but **nothing is connected to Railway** — a
+> push does not deploy there. Wire Railway up before relying on it.
+>
+> The repo must stay **public** for Streamlit Community Cloud to pull it on a
+> free account. Making it private silently stops updates: the webhook still
+> returns 200, but the app keeps serving the last build it could read.
+
 1. Go to **https://share.streamlit.io** and sign in with the GitHub account
    that has access to the `Equal-Green` org (**grant-flaming-owl**).
 2. **Authorize Streamlit for the private repo:** during sign-in, grant the
