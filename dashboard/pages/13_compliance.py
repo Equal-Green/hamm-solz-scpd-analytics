@@ -180,9 +180,10 @@ with tab_del:
         with st.expander(f"{r['no']}. {r['title']}"):
             st.markdown(head)
             st.caption(r["content"])
-            ev = [e.format(files=inv.get("total_files", 0),
+            ev = [e.format(files=f"{inv.get('total_files', 0):,}",
                            folders=len(inv.get("folders", [])),
-                           rows=f"{TOTAL_EXPECTED_ROWS:,}") for e in r["evidence"]]
+                           rows=f"{TOTAL_EXPECTED_ROWS:,}",
+                           today=f"{TODAY:%d %B %Y}") for e in r["evidence"]]
             if ev:
                 st.markdown("\n".join(f"- {e}" for e in ev))
             else:

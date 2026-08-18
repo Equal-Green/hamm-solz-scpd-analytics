@@ -86,9 +86,17 @@ DELIVERABLES = [
         "content": "Brief document outlining coordination approach, contact "
                    "strategy, Circular EP contact channel, and initial "
                    "request list.",
-        "status": "not_started",
-        "verified": False,
-        "evidence": [],
+        "status": "in_progress",
+        "verified": True,
+        "evidence": [
+            "Drafted {today} (Day 76), 69 days after the Day-7 due date. Carries "
+            "an explicit late-issuance notice and is not backdated. NOT YET "
+            "ISSUED -- becomes a delivered deliverable only when the "
+            "Consultant sends it to THS.",
+            "deliverables/Deliverable-1-Initial-Coordination-Plan.docx",
+            "Complete except for the Circular EP contact channel, which needs "
+            "the named contact and the date the channel was established.",
+        ],
     },
     {
         "no": 2,
@@ -100,9 +108,18 @@ DELIVERABLES = [
         "content": "Editable spreadsheet tracking requests, responses, "
                    "follow-ups, receipt status, pending items, unavailable "
                    "items, and comments.",
-        "status": "not_started",
-        "verified": False,
-        "evidence": [],
+        "status": "in_progress",
+        "verified": True,
+        "evidence": [
+            "deliverables/Annex2-Data-Request-Tracking-Matrix.xlsx -- 36 Annex "
+            "3 items, {files} files inventoried, correspondence register, and "
+            "the outstanding-items list.",
+            "Receipt status and coverage are populated from the delivered "
+            "archive. Request dates, follow-up actions, Circular EP contact "
+            "and response status remain blank -- only the Consultant's "
+            "correspondence record can supply them, and they are the Annex 1 "
+            "\u00a75 evidence.",
+        ],
     },
     {
         "no": 3,
@@ -135,9 +152,19 @@ DELIVERABLES = [
         "content": "Email-format updates covering activities completed, "
                    "materials received, pending items, follow-up status, "
                    "issues, delays, and next actions.",
-        "status": "not_started",
-        "verified": False,
-        "evidence": [],
+        "status": "in_progress",
+        "verified": True,
+        "evidence": [
+            "deliverables/Deliverable-4-Consolidated-Progress-Report.txt -- "
+            "covers periods 1-5 (Days 1-70) in the email format Annex 2 "
+            "specifies.",
+            "Drafted {today}, not backdated, and NOT YET SENT. The five elapsed "
+            "reporting dates are stated plainly as missed; a consolidated "
+            "retrospective is not the same obligation as reports delivered "
+            "on cadence, and scores nothing until THS receives it.",
+            "The Day-84 report is still due on schedule and is the one "
+            "remaining chance to deliver this deliverable on time.",
+        ],
     },
     {
         "no": 5,
@@ -149,9 +176,17 @@ DELIVERABLES = [
         "content": "Assessment of progress to date, materials obtained, "
                    "challenges, data gaps, Circular EP response status, and "
                    "outlook for the remaining period.",
-        "status": "not_started",
-        "verified": False,
-        "evidence": [],
+        "status": "in_progress",
+        "verified": True,
+        "evidence": [
+            "Drafted {today} (Day 76), 31 days after the Day-45 due date, with "
+            "an explicit late-issuance notice; reports the position as at "
+            "the date of issue rather than reconstructing Day 45 after the "
+            "fact. NOT YET ISSUED.",
+            "deliverables/Deliverable-5-Mid-term-Summary.docx",
+            "Outstanding: Circular EP response status per item, which depends "
+            "on the tracking matrix being completed.",
+        ],
     },
     {
         "no": 6,
@@ -182,7 +217,7 @@ SUCCESS_INDICATORS = [
     {"text": "Professional organization of materials actually received.",
      "status": "complete"},
     {"text": "Complete and up-to-date tracking matrix maintained.",
-     "status": "not_started"},
+     "status": "in_progress"},
     {"text": "Timely delivery of bi-weekly progress reports and other "
              "deliverables.", "status": "not_started"},
     {"text": "Clear documentation of pending items, unavailable items, "
